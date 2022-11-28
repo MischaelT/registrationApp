@@ -1,0 +1,56 @@
+-- public.events definition
+
+-- Drop table
+
+-- DROP TABLE public.events;
+
+CREATE TABLE public.events (
+	id int4 NOT NULL DEFAULT nextval('events_seq'::regclass),
+	"name" text NOT NULL,
+	"date" date NULL,
+	linkedin_link text NOT NULL,
+	is_passed bool NOT NULL DEFAULT false,
+	CONSTRAINT events_pk PRIMARY KEY (id)
+);
+
+
+
+-- public.events definition
+
+-- Drop table
+
+-- DROP TABLE public.events;
+
+CREATE TABLE public.events (
+	id int4 NOT NULL DEFAULT nextval('events_seq'::regclass),
+	"name" text NOT NULL,
+	"date" date NULL,
+	linkedin_link text NOT NULL,
+	is_passed bool NOT NULL DEFAULT false,
+	CONSTRAINT events_pk PRIMARY KEY (id)
+);
+
+
+
+
+
+-- public.event_users definition
+
+-- Drop table
+
+-- DROP TABLE public.event_users;
+
+CREATE TABLE public.event_users (
+	events_user_id int4 NOT NULL DEFAULT nextval('event_user_seq'::regclass),
+	event_id int4 NOT NULL,
+	user_id int4 NOT NULL,
+	CONSTRAINT event_users_pk PRIMARY KEY (events_user_id)
+);
+
+
+-- public.event_users foreign keys
+
+ALTER TABLE public.event_users ADD CONSTRAINT event_users_fk FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE public.event_users ADD CONSTRAINT event_users_fk_1 FOREIGN KEY (event_id) REFERENCES public.events(id) ON DELETE CASCADE ON UPDATE CASCADE;
+
+
