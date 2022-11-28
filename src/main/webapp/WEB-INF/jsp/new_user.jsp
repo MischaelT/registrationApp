@@ -18,27 +18,45 @@
                      <table>
                         <p>
                             <tr>
-                                <td><form:label path="name">Name</form:label></td>
+                                <td><form:label path="name">Name   </form:label></td>
                                 <td><form:input path="name"/></td>
                             </tr>
                         </p>
                         <p>
                             <tr>
-                                <td><form:label path="linkedInLink">LinkedIn link</form:label></td>
+                                <td><form:label path="linkedInLink">LinkedIn link   </form:label></td>
                                 <td><form:input path="linkedInLink"/></td>
                             </tr>
                         </p>
-                        <tr>
-                            <td><form:label path="facebookLink">facebook Link</form:label></td>
-                            <td><form:input path="facebookLink"/></td>
-                        </tr>
-                        <tr>
-                            <td><form:label path="events">Event</form:label></td>
-                            <td><form:input path="events"/></td>
-                        </tr>
-                        <tr>
-                            <td><input type="submit" value="Submit"/></td>
-                        </tr>
+                        <p>
+                            <tr>
+                                <td><form:label path="facebookLink">facebook Link   </form:label></td>
+                                <td><form:input path="facebookLink"/></td>
+                            </tr>
+                        </p>
+                        <p>
+                            <tr>
+                                <td>Event name   </td>
+                                <td>
+                                    <div class="input-group mb-3">
+                                      <select class="custom-select" id="inputGroupSelect02">
+                                        <option selected>Choose...</option>
+                                          <c:forEach var="event" items="${upcoming_events}">
+                                                <option value="${event.getName()}">${event.getName()}</option>
+                                          </c:forEach>
+                                      </select>
+                                      <div class="input-group-append">
+                                        <label class="input-group-text" for="inputGroupSelect02">Options</label>
+                                      </div>
+                                    </div>
+                                <td>
+                            </tr>
+                        </p>
+                        <p>
+                            <tr>
+                                <td><input type="submit" value="Submit"/></td>
+                            </tr>
+                        </p>
                     </table>
                 </form:form>
             <div>

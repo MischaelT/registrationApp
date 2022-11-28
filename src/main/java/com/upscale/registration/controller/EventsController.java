@@ -59,7 +59,7 @@ public class EventsController {
 
     @RequestMapping(value="/events/new_event", method = RequestMethod.POST)
     public String submitForm(@ModelAttribute("event")Event event, BindingResult result, ModelMap model){
-        // check the date. If it is bigger than today, set isPassed to false
+        //TODO check the date. If it is bigger than today, set isPassed to false
         event.setIsPassed(false);
         db.save(event);
         return "success";
@@ -67,6 +67,7 @@ public class EventsController {
 
     @RequestMapping(value="/events/statistics", method = RequestMethod.GET)
     public String showStatisticsPage(ModelMap model){
+        // TODO implement statistics by event
         return "statistics";
     }
 }

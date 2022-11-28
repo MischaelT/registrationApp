@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-
+// TODO solve a problem with navbar
 @Controller
 public class EventController {
 
@@ -33,16 +33,15 @@ public class EventController {
         return new ModelAndView("event", events_map);
     }
 
-    @RequestMapping(value="/events/upcoming/{id}/add_user", method = RequestMethod.GET)
-    public ModelAndView showAddUserToUpcomingForm(@PathVariable int id, ModelMap model){
+    @RequestMapping(value="/events/upcoming/{id}/add_user/manually", method = RequestMethod.GET)
+    public ModelAndView showAddUserManuallyForm(@PathVariable int id, ModelMap model){
         return new ModelAndView("new_user", "user", new User());
     }
 
-    @RequestMapping(value="/events/upcoming/{id}/add_user", method = RequestMethod.POST)
-    public ModelAndView addUserToUpcomingEvent(@PathVariable int id, ModelMap model){
+    @RequestMapping(value="/events/upcoming/{id}/add_user/manually", method = RequestMethod.POST)
+    public ModelAndView addUserManually(@PathVariable int id, ModelMap model){
 
-        //add_user
-
+        //TODO implement adding user to the database
 
         List<Event> events = (List<Event>) db.findById(id);
         Set<User> user_list = events.get(0).getUsers();
@@ -51,6 +50,26 @@ public class EventController {
 
         return new ModelAndView("success", events_map);
     }
+
+    @RequestMapping(value="/events/upcoming/{id}/add_user/automatically", method = RequestMethod.GET)
+    public ModelAndView showAddUserAutomaticallyForm(@PathVariable int id, ModelMap model){
+        // TODO implement form to paste the linkedIn link to parse
+        return new ModelAndView("new_user", "user", new User());
+    }
+
+    @RequestMapping(value="/events/upcoming/{id}/add_user/automatically", method = RequestMethod.POST)
+    public ModelAndView AddUserAutomatically(@PathVariable int id, ModelMap model){
+
+        //TODO Implement parsing linkedIn page with Selenium
+
+        List<Event> events = (List<Event>) db.findById(id);
+        Set<User> user_list = events.get(0).getUsers();
+        Map<String, Object> events_map = new HashMap<String, Object>();
+        events_map.put("events", events);
+
+        return new ModelAndView("success", events_map);
+    }
+
 
     @RequestMapping(value="/events/passed/{id}", method = RequestMethod.GET)
     public ModelAndView showPassedEvent(@PathVariable long id, ModelMap model){
@@ -61,6 +80,7 @@ public class EventController {
 
         return new ModelAndView("event", events_map);
     }
+
 
 
 

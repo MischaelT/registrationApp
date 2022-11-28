@@ -28,7 +28,7 @@ public class UserController {
         List<User> users = (List<User>) db.findById(id);
         users_map.put("users", users);
 
-        return new ModelAndView("users", users_map);
+        return new ModelAndView("user", users_map);
     }
 
     @RequestMapping(value="/users/user/{id}", method = RequestMethod.POST)
@@ -43,6 +43,7 @@ public class UserController {
 
     @RequestMapping(value="/user/{id}/statistics", method = RequestMethod.GET)
     public String showStatisticsPage(@PathVariable long id, ModelMap model){
+        // TODO Implement statistics by user
         return "statistics";
     }
 }

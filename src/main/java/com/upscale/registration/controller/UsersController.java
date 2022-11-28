@@ -22,28 +22,57 @@ import java.util.Map;
 public class UsersController {
 
     @Autowired
-    private UserRepository db;
+    private UserRepository user_repository;
+    @Autowired
+    private EventsRepository event_repository;
 
     @RequestMapping(value="/users", method = RequestMethod.GET)
     public ModelAndView showUsers(ModelMap model){
 
         Map<String, Object> users_map = new HashMap<String, Object>();
-        List<User> users = (List<User>) db.findAll();
+        List<User> users = (List<User>) user_repository.findAll();
         users_map.put("users", users);
 
         return new ModelAndView("users", users_map);
     }
 
-    @RequestMapping(value="/users/new_user", method = RequestMethod.GET)
+    @RequestMapping(value="/users/new_user/manually", method = RequestMethod.GET)
     public ModelAndView showAddUserPage(){
-        return new ModelAndView("new_user", "user", new User());
+        Map<String, Object> events_map = new HashMap<String, Object>();
+        List<Event> events = event_repository.findByIsPassed(false);
+        events_map.put("upcoming_events", events);
+
+        //TODO implement transferring list of events to the view
+
+        ModelAndView modelAndView = new ModelAndView("new_user", "user", new User());
+
+        modelAndView.addObject("upcoming_events", events_map);
+        return modelAndView;
     }
 
-    @RequestMapping(value="/users/new_user", method = RequestMethod.POST)
-    public String addUser(@ModelAttribute("user") User user, BindingResult result, ModelMap model){
-        // Make a list of current events to choose in view
-        db.save(user);
+    @RequestMapping(value="/users/new_user/manually", method = RequestMethod.POST)
+    public String addUserManually(@ModelAttribute("user") User user, BindingResult result, ModelMap model){
+        //TODO implement transferring list of events to the view
+        user_repository.save(user);
         return "success";
     }
 
+    @RequestMapping(value="/users/new_user/automatically", method = RequestMethod.GET)
+    public ModelAndView showAddUserAutomaticallyPage(){
+        Map<String, Object> events_map = new HashMap<String, Object>();
+        List<Event> events = event_repository.findByIsPassed(false);
+        events_map.put("upcoming_events", events);
+        ModelAndView modelAndView = new ModelAndView("new_user_automatically", "user", new User());
+
+        // TODO implement form to paste the linkedIn link to parse
+
+        return modelAndView;
+    }
+
+    @RequestMapping(value="/users/new_user/automatically", method = RequestMethod.POST)
+    public String addUserAutomatically(@ModelAttribute("user") User user, BindingResult result, ModelMap model){
+        //TODO implement parse linkedIn with Selenium
+        user_repository.save(user);
+        return "success";
+    }
 }

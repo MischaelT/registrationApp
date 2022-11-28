@@ -10,7 +10,12 @@
                 <br>
                 <br>
                 <br>
-                <h1> Statistics </h1>
+                <h1> Statistics by all events </h1>
+                <br>
+                <br>
+                <p> How much attendees is at average</p>
+                <p> Events with the most number of attendees</p>
+                <p> Events with the least number of attendees</p>
             <div>
         </main>
         <script src="../webjars/jquery/3.0.0/jquery.min.js"></script>

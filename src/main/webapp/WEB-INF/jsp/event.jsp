@@ -50,8 +50,9 @@
                           <c:choose>
                              <c:when test="${!(events.get(0).getIsPassed())}">
                                 <p>Would you like to add more? </p>
-                                <p> <a href="../../users/new_user">Add new</a> </p>
-                             </c:when>
+                                <p> <a href="${id}/add_user/manually"> Add manually </a> </p>
+                                <p> <a href="${id}/add_user/automatically"> Add automatically </a> </p>
+                              </c:when>
                           </c:choose>
 
                     </c:otherwise>
