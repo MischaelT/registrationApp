@@ -17,6 +17,8 @@ import java.util.Map;
 import java.util.Set;
 
 // TODO solve a problem with navbar
+// TODO solve a problem with css in event/is/add_user/automatically(manually)
+
 @Controller
 public class EventController {
 
@@ -53,8 +55,7 @@ public class EventController {
 
     @RequestMapping(value="/events/upcoming/{id}/add_user/automatically", method = RequestMethod.GET)
     public ModelAndView showAddUserAutomaticallyForm(@PathVariable int id, ModelMap model){
-        // TODO implement form to paste the linkedIn link to parse
-        return new ModelAndView("new_user", "user", new User());
+        return new ModelAndView("new_user_automatically", "user", new User());
     }
 
     @RequestMapping(value="/events/upcoming/{id}/add_user/automatically", method = RequestMethod.POST)

@@ -64,7 +64,6 @@ public class UsersController {
         events_map.put("upcoming_events", events);
         ModelAndView modelAndView = new ModelAndView("new_user_automatically", "user", new User());
 
-        // TODO implement form to paste the linkedIn link to parse
 
         return modelAndView;
     }
