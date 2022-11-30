@@ -22,7 +22,7 @@
                         </tr>
                         <tr>
                             <td><form:label path="date">Date</form:label></td>
-                            <td><form:input type="date" path="date"/></td>
+                            <td><form:input path="date" type="date"/></td>
                         </tr>
                         <tr>
                             <td><form:label path="linkedInLink">LinkedIn link</form:label></td>

@@ -10,17 +10,16 @@
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Events</a>
         <div class="dropdown-menu" aria-labelledby="dropdown01">
-          <a class="dropdown-item" href="upcoming">Upcoming</a>
-          <a class="dropdown-item" href="passed">Passed</a>
-          <a class="dropdown-item" href=" new_event">Add new</a>
+          <a class="dropdown-item" href="/events/upcoming">Upcoming</a>
+          <a class="dropdown-item" href="/events/passed">Passed</a>
+          <a class="dropdown-item" href="/events/new_event">Add new</a>
         </div>
       </li>
 
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Users</a>
         <div class="dropdown-menu" aria-labelledby="dropdown01">
-          <a class="dropdown-item" href="users"> All </a>
-          <a class="dropdown-item" href="users/new_user/manually">Add new</a>
+          <a class="dropdown-item" href="/users"> All </a>
         </div>
       </li>
 

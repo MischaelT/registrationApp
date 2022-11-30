@@ -1,8 +1,8 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <html>
     <head>
-        <link rel="stylesheet" href="../webjars/bootstrap/4.0.0-2/css/bootstrap.min.css"/>
-        <title> New Event</title>
+        <link rel="stylesheet" href="../../../../webjars/bootstrap/4.0.0-2/css/bootstrap.min.css"/>
+        <title> New User</title>
     </head>
     <body>
         <%@ include file="includes/navbar.jsp"%>
@@ -14,7 +14,7 @@
                 <h1>Add new user</h1>
                 <br>
                 <form:form method="POST"
-                  action="/users/new_user" modelAttribute="user">
+                  action="/events/upcoming/${id}/add_user/manually" modelAttribute="user">
                      <table>
                         <p>
                             <tr>
@@ -54,16 +54,16 @@
                         </p>
                         <p>
                             <tr>
-                                <td><input type="submit" value="Submit"/></td>
+                                <td><input type="submit" value="Submit"></input></td>
                             </tr>
                         </p>
                     </table>
                 </form:form>
             <div>
         </main>
-        <script src="../webjars/jquery/3.0.0/jquery.min.js"></script>
-        <script src="../webjars/popper.js/1.12.9-1/umd/popper.min.js"></script>
-        <script src="../webjars/bootstrap/4.0.0-2/js/bootstrap.min.js"></script>
+        <script src="../../../../webjars/jquery/3.0.0/jquery.min.js"></script>
+        <script src="../../../../webjars/popper.js/1.12.9-1/umd/popper.min.js"></script>
+        <script src="../../../../webjars/bootstrap/4.0.0-2/js/bootstrap.min.js"></script>
     </body>
 
 </html>

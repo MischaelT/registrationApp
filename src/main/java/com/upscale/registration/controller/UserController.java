@@ -25,8 +25,11 @@ public class UserController {
     public ModelAndView showUser(@PathVariable long id, ModelMap model){
 
         Map<String, Object> users_map = new HashMap<String, Object>();
-        List<User> users = (List<User>) db.findById(id);
+        //TODO Check if in database
+        List<User> users = db.findById(id);
         users_map.put("users", users);
+        System.out.println(users.get(0).getEvents());
+
 
         return new ModelAndView("user", users_map);
     }
@@ -35,7 +38,9 @@ public class UserController {
     public ModelAndView updateUser(@PathVariable long id, ModelMap model){
 
         Map<String, Object> users_map = new HashMap<String, Object>();
-        List<User> users = (List<User>) db.findById(id);
+        //TODO Check if in database
+
+        List<User> users = db.findById(id);
         users_map.put("users", users);
 
         return new ModelAndView("user", users_map);

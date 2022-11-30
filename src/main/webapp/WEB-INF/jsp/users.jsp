@@ -26,8 +26,8 @@
                                 <c:forEach var="user" items="${users}">
                                     <tr>
                                       <td><a href="../../users/user/${user.getId()}">${user.getName()}</a></td>
-                                      <td><a href="${user.getLinkedInLink()}">@linked</a></td>
-                                      <td><a href="${user.getFacebookLink()}">@facebook</a></td>
+                                      <td><a href="https://${user.getLinkedInLink()}">@linked</a></td>
+                                      <td><a href="https://${user.getFacebookLink()}">@facebook</a></td>
                                     </tr>
                                 </c:forEach>
                             </tbody>

@@ -2,7 +2,7 @@ package com.upscale.registration.model;
 
 
 import jakarta.persistence.*;
-import org.springframework.boot.autoconfigure.web.WebProperties;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -17,6 +17,7 @@ public class Event {
     private long id;
     @Column(name = "name")
     private String name;
+
     @Column( name = "date")
     private Date date;
     @Column(name = "linkedin_link")
@@ -54,6 +55,14 @@ public class Event {
 
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setPassed(boolean passed) {
+        isPassed = passed;
     }
 
     public Date getDate() {

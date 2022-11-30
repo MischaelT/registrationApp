@@ -26,7 +26,7 @@
                               <c:forEach var="event" items="${events}">
                                   <tr>
                                     <td><a href="passed/${event.getId()}">${event.getName()}</a></td>
-                                    <td><a href="${event.getLinkedInLink()}">@linked</a></td>
+                                    <td><a href="https://${event.getLinkedInLink()}">@linked</a></td>
                                   </tr>
                               </c:forEach>
                           </tbody>

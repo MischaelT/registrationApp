@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.HashMap;
 import java.util.List;
@@ -36,7 +37,7 @@ public class EventsController {
     public ModelAndView showUpcomingEventsPage(ModelMap model){
 
         Map<String, Object> events_map = new HashMap<String, Object>();
-        List<Event> events = (List<Event>) db.findByIsPassed(false);
+        List<Event> events = db.findByIsPassed(false);
         events_map.put("events", events);
 
         return new ModelAndView("upcoming", events_map);
@@ -46,7 +47,8 @@ public class EventsController {
     public ModelAndView showPassedEventsPage(ModelMap model){
 
         Map<String, Object> events_map = new HashMap<String, Object>();
-        List<Event> events = (List<Event>) db.findByIsPassed(true);
+        //TODO Check if in database
+        List<Event> events = db.findByIsPassed(true);
         events_map.put("events", events);
 
         return new ModelAndView("passed", events_map);
@@ -58,15 +60,18 @@ public class EventsController {
     }
 
     @RequestMapping(value="/events/new_event", method = RequestMethod.POST)
-    public String submitForm(@ModelAttribute("event")Event event, BindingResult result, ModelMap model){
-        //TODO check the date. If it is bigger than today, set isPassed to false
+    public RedirectView submitForm(@ModelAttribute("event")Event event, BindingResult result, ModelMap model){
+        //TODO check the date. If it is bigger than today, set isPassed to false##
+
+        System.out.println(event.getDate());
         event.setIsPassed(false);
         db.save(event);
-        return "success";
+        return new RedirectView("/events/upcoming");
     }
 
     @RequestMapping(value="/events/statistics", method = RequestMethod.GET)
     public String showStatisticsPage(ModelMap model){
+
         // TODO implement statistics by event
         return "statistics";
     }

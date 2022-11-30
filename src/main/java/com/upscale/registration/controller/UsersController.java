@@ -30,6 +30,9 @@ public class UsersController {
     public ModelAndView showUsers(ModelMap model){
 
         Map<String, Object> users_map = new HashMap<String, Object>();
+        //TODO Check if in database
+
+
         List<User> users = (List<User>) user_repository.findAll();
         users_map.put("users", users);
 
@@ -52,7 +55,6 @@ public class UsersController {
 
     @RequestMapping(value="/users/new_user/manually", method = RequestMethod.POST)
     public String addUserManually(@ModelAttribute("user") User user, BindingResult result, ModelMap model){
-        //TODO implement transferring list of events to the view
         user_repository.save(user);
         return "success";
     }
@@ -60,6 +62,8 @@ public class UsersController {
     @RequestMapping(value="/users/new_user/automatically", method = RequestMethod.GET)
     public ModelAndView showAddUserAutomaticallyPage(){
         Map<String, Object> events_map = new HashMap<String, Object>();
+        //TODO Check if in database
+
         List<Event> events = event_repository.findByIsPassed(false);
         events_map.put("upcoming_events", events);
         ModelAndView modelAndView = new ModelAndView("new_user_automatically", "user", new User());

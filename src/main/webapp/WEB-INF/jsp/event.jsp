@@ -2,7 +2,7 @@
 <html>
     <head>
         <link rel="stylesheet" href="../../webjars/bootstrap/4.0.0-2/css/bootstrap.min.css"/>
-        <title> Passed Events </title>
+        <title> Event </title>
     </head>
     <body>
         <%@ include file="includes/navbar.jsp"%>
@@ -22,7 +22,7 @@
                           <c:choose>
                              <c:when test="${!(events.get(0).getIsPassed())}">
                                 <p>Would you like to add them? </p>
-                                <p> <a href="../../users/new_user">Add new</a> </p>
+                                <p> <a href="/events/upcoming/${id}/add_user/manually">Add new</a> </p>
                              </c:when>
                           </c:choose>
                     </c:when>
@@ -40,8 +40,8 @@
                                 <c:forEach var="user" items="${events.get(0).getUsers()}">
                                     <tr>
                                       <td><a href="../../users/user/${user.getId()}">${user.getName()}</a></td>
-                                      <td><a href="${user.getLinkedInLink()}">@linked</a></td>
-                                      <td><a href="${user.getFacebookLink()}">@facebook</a></td>
+                                      <td><a href="https://${user.getLinkedInLink()}">@linked</a></td>
+                                      <td><a href="https://${user.getFacebookLink()}">@facebook</a></td>
                                     </tr>
                                 </c:forEach>
                             </tbody>
@@ -50,8 +50,8 @@
                           <c:choose>
                              <c:when test="${!(events.get(0).getIsPassed())}">
                                 <p>Would you like to add more? </p>
-                                <p> <a href="${id}/add_user/manually"> Add manually </a> </p>
-                                <p> <a href="${id}/add_user/automatically"> Add automatically </a> </p>
+                                <p> <a href="/events/upcoming/${id}/add_user/manually"> Add manually </a> </p>
+                                <p> <a href="/events/upcoming/${id}/add_user/automatically"> Add automatically </a> </p>
                               </c:when>
                           </c:choose>
 

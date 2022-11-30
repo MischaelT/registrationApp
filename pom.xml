@@ -69,7 +69,12 @@
 			<artifactId>jakarta.servlet.jsp.jstl</artifactId>
 			<version>2.0.0</version>
 		</dependency>
-
+		
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-chrome-driver</artifactId>
+			<version>4.6.0</version>
+		</dependency>
 
 
 
