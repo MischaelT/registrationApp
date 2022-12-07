@@ -1,3 +1,4 @@
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <html>
     <head>
         <link rel="stylesheet" href="../../../../webjars/bootstrap/4.0.0-2/css/bootstrap.min.css"/>
@@ -13,10 +14,18 @@
                 <h1> Add users automatically to the event with id ${id} </h1>
                 <br>
                 <br>
-                <form:form method="POST" action="/events/upcoming/{id}/add_user/automatically">
-                    <p> LinkedIn link <input type="text">  </input> </p>
-                    <p><input type="submit" value="Submit"/></input></p>
-                </form>
+                <form:form method="POST" action="/events/upcoming/${id}/add_user/automatically"
+                 modelAttribute="form_content">
+                  <table>
+                     <tr>
+                        <td> <form:label path="content"> LinkedIn link </form:label> </td>
+                        <td> <form:input path="content" type="text"/> </td>
+                     </tr>
+                     <tr>
+                        <td><input type="submit" value="Submit"/></td>
+                     </tr>
+                    </table>
+                </form:form>
             <div>
         </main>
         <script src="../../../../webjars/jquery/3.0.0/jquery.min.js"></script>

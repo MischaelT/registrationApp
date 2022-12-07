@@ -63,7 +63,7 @@ public class EventsController {
     public RedirectView submitForm(@ModelAttribute("event")Event event, BindingResult result, ModelMap model){
         //TODO check the date. If it is bigger than today, set isPassed to false##
 
-        System.out.println(event.getDate());
+        System.out.println(event.getDate() );
         event.setIsPassed(false);
         db.save(event);
         return new RedirectView("/events/upcoming");

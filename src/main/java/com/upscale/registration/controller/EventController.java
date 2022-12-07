@@ -1,8 +1,11 @@
 package com.upscale.registration.controller;
 
 import com.upscale.registration.model.Event;
+import com.upscale.registration.model.Form;
 import com.upscale.registration.model.User;
+import com.upscale.registration.parser.Parser;
 import com.upscale.registration.repositories.EventsRepository;
+import com.upscale.registration.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -21,6 +24,8 @@ public class EventController {
 
     @Autowired
     private EventsRepository db;
+    @Autowired
+    private UserRepository userDb;
 
     @RequestMapping(value="/events/upcoming/{id}", method = RequestMethod.GET)
     public ModelAndView showUpcomingEvent(@PathVariable int id, ModelMap model){
@@ -55,22 +60,36 @@ public class EventController {
     }
 
     @RequestMapping(value="/events/upcoming/{id}/add_user/automatically", method = RequestMethod.GET)
-    public ModelAndView showAddUserAutomaticallyForm(@PathVariable int id, ModelMap model){
-        return new ModelAndView("new_user_automatically", "user", new User());
+    public ModelAndView showAddUserAutomaticallyForm(@PathVariable int id, @ModelAttribute("form_content") Form form,
+                                                     BindingResult result, ModelMap model){
+
+
+        return new ModelAndView("new_user_automatically", "form_content", new Form());
     }
 
     @RequestMapping(value="/events/upcoming/{id}/add_user/automatically", method = RequestMethod.POST)
-    public ModelAndView AddUserAutomatically(@PathVariable int id, ModelMap model){
+    public RedirectView AddUserAutomatically(@PathVariable int id, @ModelAttribute("form_content") Form form,
+                                             BindingResult result, ModelMap model){
 
-        //TODO Implement parsing linkedIn page with Selenium
+        Parser parser = new Parser("m.kouzin@upscale-labs.com","VeryStrongPassword");
+        String linked_link = form.getContent();
+        List<User> new_users = parser.runParsing(linked_link);
+        //TODO bug with dissapearing users
+        HashSet<Event> events = new HashSet<>(db.findById(id));
 
-        List<User> users = new ArrayList<>();
-        User foundedUser1 = new User();
-        User foundedUser2 = new User();
-        Map<String, Object> users_map = new HashMap<String, Object>();
-        users_map.put("events", users);
+        for (User user: new_users){
+            user.setEvents(events);
+            user.setFacebookLink("");
+            userDb.save(user);
+        }
 
-        return new ModelAndView("founded_user", users_map);
+        Event event = db.findById(id).get(0);
+
+        HashSet<User> users = new HashSet<>(new_users);
+        event.setUsers(users);
+        db.save(event);
+
+        return new RedirectView("/events/upcoming/{id}");
     }
 
 

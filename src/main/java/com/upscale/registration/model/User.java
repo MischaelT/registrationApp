@@ -39,6 +39,11 @@ public class User {
         this.facebookLink = facebookLink;
         this.events = events;
     }
+    public User(String name, String linkedInLink) {
+        this.name = name;
+        this.linkedInLink = linkedInLink;
+    }
+
 
     public void setName(String name) {
         this.name = name;
