@@ -14,6 +14,9 @@
                     <br>
                     <h1>List of users from database</h1>
                     <br>
+                    <p><input type="text" placeholder="Search by user..."> <button type="button">submit</button></p>
+                    <br>
+                    <br>
                         <table class="table table-hover">
                           <thead>
                             <tr>
@@ -26,14 +29,12 @@
                                 <c:forEach var="user" items="${users}">
                                     <tr>
                                       <td><a href="../../users/user/${user.getId()}">${user.getName()}</a></td>
-                                      <td><a href="https://${user.getLinkedInLink()}">@linked</a></td>
-                                      <td><a href="https://${user.getFacebookLink()}">@facebook</a></td>
+                                      <td><a href="${user.getLinkedInLink()}">@linked</a></td>
+                                      <td><a href="${user.getFacebookLink()}">@facebook</a></td>
                                     </tr>
                                 </c:forEach>
                             </tbody>
                           </table>
-
-
             <div>
         </main>
         <script src="../../../webjars/jquery/3.0.0/jquery.min.js"></script>

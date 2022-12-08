@@ -1,8 +1,9 @@
 package com.upscale.registration.controller;
 
 
+import com.upscale.registration.model.Event;
 import com.upscale.registration.model.User;
-import com.upscale.registration.repositories.UserRepository;
+import com.upscale.registration.repositories.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -18,37 +19,46 @@ import java.util.Map;
 @Controller
 public class UserController {
     @Autowired
-    private UserRepository db;
-
+    private UsersRepository userRepository;
 
     @RequestMapping(value="/users/user/{id}", method = RequestMethod.GET)
     public ModelAndView showUser(@PathVariable long id, ModelMap model){
 
-        Map<String, Object> users_map = new HashMap<String, Object>();
-        //TODO Check if in database
-        List<User> users = db.findById(id);
-        users_map.put("users", users);
-        System.out.println(users.get(0).getEvents());
+        Map<String, Object> users_map = new HashMap<>();
+        ModelAndView view = null;
 
-
-        return new ModelAndView("user", users_map);
+        if (userRepository.existsById(Long.valueOf(id))){
+            List<User> users =  userRepository.findById(id);
+            users_map.put("users", users);
+            view = new ModelAndView("users", users_map);
+        } else{
+            view = new ModelAndView("error");
+        }
+        return view;
     }
 
     @RequestMapping(value="/users/user/{id}", method = RequestMethod.POST)
     public ModelAndView updateUser(@PathVariable long id, ModelMap model){
 
-        Map<String, Object> users_map = new HashMap<String, Object>();
-        //TODO Check if in database
+        Map<String, Object> users_map = new HashMap<>();
+        ModelAndView view = null;
 
-        List<User> users = db.findById(id);
-        users_map.put("users", users);
+        if (userRepository.existsById(Long.valueOf(id))){
+            List<User> users =  userRepository.findById(id);
+            users_map.put("users", users);
+            view = new ModelAndView("users", users_map);
+        } else{
+            view = new ModelAndView("error");
+        }
+        return view;
 
-        return new ModelAndView("user", users_map);
     }
 
     @RequestMapping(value="/user/{id}/statistics", method = RequestMethod.GET)
     public String showStatisticsPage(@PathVariable long id, ModelMap model){
+
         // TODO Implement statistics by user
+
         return "statistics";
     }
 }

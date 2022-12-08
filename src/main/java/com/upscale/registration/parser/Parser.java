@@ -7,20 +7,17 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 
 import java.util.ArrayList;
-import java.util.Collections;
+
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static java.util.Collections.emptyList;
 
 public class Parser {
 
-    private String linkedItnName = "";
-    private String linkedInPassword = "";
-
-    private String basePage = "";
-    private WebDriver driver = null;
-
+    private String linkedItnName;
+    private String linkedInPassword;
+    private String basePage;
+    private WebDriver driver;
 
 
     public Parser(String linkedInName, String linkedInPassword) {
@@ -31,13 +28,12 @@ public class Parser {
 
         System.setProperty("webdriver.chrome.driver", "C:\\projects\\chromedriver_win32\\chromedriver.exe");
         this.driver = new ChromeDriver();
-
-
     }
 
     public List<User> runParsing(String eventPage){
         login(basePage);
         List<User> userList = getEventAttendees(eventPage);
+        driver.quit();
         return userList;
     }
 
@@ -56,7 +52,6 @@ public class Parser {
 
         sleep(3);
         login_button.click();
-
     }
 
     private List<User> getEventAttendees(String event_page){
@@ -72,11 +67,7 @@ public class Parser {
 
         for (WebElement element: attendees) {
             String name = element.getText().split("\n")[0];
-            System.out.println(name);
-
             String link = element.findElement(By.className("app-aware-link")).getAttribute("href");
-            System.out.println(link);
-
             User new_user = new User(name, link);
             new_users.add(new_user);
         }
@@ -90,5 +81,4 @@ public class Parser {
             throw new RuntimeException(e);
         }
     }
-
 }

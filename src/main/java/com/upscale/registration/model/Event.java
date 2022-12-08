@@ -1,9 +1,6 @@
 package com.upscale.registration.model;
 
-
 import jakarta.persistence.*;
-import org.hibernate.annotations.UpdateTimestamp;
-
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -37,7 +34,7 @@ public class Event {
 
     public Event() {
     }
-// Use builder pattern to make different constructors
+
     public Event(String name, Date date, String linkedInLink, boolean isPassed) {
         this.name = name;
         this.date = date;
@@ -89,7 +86,7 @@ public class Event {
         return isPassed;
     }
 
-    public void setIsPassed(boolean is_passed) {
+    public void setIsPassed(boolean isPassed) {
         this.isPassed = isPassed;
     }
 }

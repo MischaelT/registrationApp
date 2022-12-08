@@ -1,11 +1,9 @@
 package com.upscale.registration.controller;
 
 import com.upscale.registration.model.Event;
-import com.upscale.registration.model.Form;
 import com.upscale.registration.model.User;
-import com.upscale.registration.parser.Parser;
 import com.upscale.registration.repositories.EventsRepository;
-import com.upscale.registration.repositories.UserRepository;
+import com.upscale.registration.repositories.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -23,20 +21,45 @@ import java.util.*;
 public class EventController {
 
     @Autowired
-    private EventsRepository db;
+    private EventsRepository eventsRepository;
     @Autowired
-    private UserRepository userDb;
+    private UsersRepository usersRepository;
 
     @RequestMapping(value="/events/upcoming/{id}", method = RequestMethod.GET)
     public ModelAndView showUpcomingEvent(@PathVariable int id, ModelMap model){
 
-        Map<String, Object> events_map = new HashMap<String, Object>();
+        Map<String, Object> events_map = new HashMap<>();
 
-        //TODO check if a event is in database
-        List<Event> events = (List<Event>) db.findById(id);
-        events_map.put("events", events);
+        // TODO Implement mark_as_passed button
+        // TODO Implement change_name button
 
-        return new ModelAndView("event", events_map);
+        ModelAndView view ;
+
+        if (eventsRepository.existsById(Long.valueOf(id))){
+            List<Event> events =  eventsRepository.findById(id);
+            events_map.put("events", events);
+             view = new ModelAndView("event", events_map);
+        } else{
+             view = new ModelAndView("error");
+        }
+        return view;
+    }
+
+    @RequestMapping(value="/events/passed/{id}", method = RequestMethod.GET)
+    public ModelAndView showPassedEvent(@PathVariable long id, ModelMap model) {
+
+        Map<String, Object> events_map = new HashMap<>();
+
+        ModelAndView view = null;
+
+        if (eventsRepository.existsById(Long.valueOf(id))){
+            List<Event> events =  eventsRepository.findById(id);
+            events_map.put("events", events);
+            view = new ModelAndView("event", events_map);
+        } else{
+            view = new ModelAndView("error");
+        }
+        return view;
     }
 
     @RequestMapping(value="/events/upcoming/{id}/add_user/manually", method = RequestMethod.GET)
@@ -47,62 +70,25 @@ public class EventController {
     @RequestMapping(value="/events/upcoming/{id}/add_user/manually", method = RequestMethod.POST)
     public RedirectView addUserManually(@PathVariable int id, @ModelAttribute("user")User user, BindingResult result, ModelMap model){
 
+        //TODO check the link format, presence or apsense of https
 
-    //TODO check if event is in database
-        List<Event> events = db.findById(id);
-        Event event = events.get(0);
-        Set<User> user_list = event.getUsers();
-        user_list.add(user);
-        event.setUsers(user_list);
-        db.save(event);
+        RedirectView view = null;
 
-        return new RedirectView("/events/upcoming/{id}");
-    }
+        boolean userInDatabase = usersRepository.findByNameAndLinkedInLink(user.getName(), user.getLinkedInLink()).isEmpty();
 
-    @RequestMapping(value="/events/upcoming/{id}/add_user/automatically", method = RequestMethod.GET)
-    public ModelAndView showAddUserAutomaticallyForm(@PathVariable int id, @ModelAttribute("form_content") Form form,
-                                                     BindingResult result, ModelMap model){
+        if (eventsRepository.existsById(Long.valueOf(id))&(userInDatabase)){
 
-
-        return new ModelAndView("new_user_automatically", "form_content", new Form());
-    }
-
-    @RequestMapping(value="/events/upcoming/{id}/add_user/automatically", method = RequestMethod.POST)
-    public RedirectView AddUserAutomatically(@PathVariable int id, @ModelAttribute("form_content") Form form,
-                                             BindingResult result, ModelMap model){
-
-        Parser parser = new Parser("m.kouzin@upscale-labs.com","VeryStrongPassword");
-        String linked_link = form.getContent();
-        List<User> new_users = parser.runParsing(linked_link);
-        //TODO bug with dissapearing users
-        HashSet<Event> events = new HashSet<>(db.findById(id));
-
-        for (User user: new_users){
-            user.setEvents(events);
-            user.setFacebookLink("");
-            userDb.save(user);
+            List<Event> events = eventsRepository.findById(id);
+            Event event = events.get(0);
+            Set<User> user_list = event.getUsers();
+            user_list.add(user);
+            event.setUsers(user_list);
+            eventsRepository.save(event);
+            view = new RedirectView("/events/upcoming/{id}");
+        } else{
+            view = new RedirectView("/error");
         }
+        return view;
 
-        Event event = db.findById(id).get(0);
-
-        HashSet<User> users = new HashSet<>(new_users);
-        event.setUsers(users);
-        db.save(event);
-
-        return new RedirectView("/events/upcoming/{id}");
     }
-
-
-    @RequestMapping(value="/events/passed/{id}", method = RequestMethod.GET)
-    public ModelAndView showPassedEvent(@PathVariable long id, ModelMap model) {
-
-        Map<String, Object> events_map = new HashMap<String, Object>();
-
-    //TODO if in database
-        List<Event> events = db.findById(id);
-        events_map.put("events", events);
-
-        return new ModelAndView("event", events_map);
-    }
-
 }

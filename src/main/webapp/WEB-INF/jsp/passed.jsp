@@ -13,24 +13,29 @@
                     <br>
                     <h1>List of Passed Events</h1>
                     <br>
-
-                    <table class="table table-hover">
-                      <thead>
-                        <tr>
-                          <th scope="col">Event</th>
-                            <th scope="col">Linked Link</th>
-                        </tr>
-                      </thead>
-
-                        <tbody>
-                              <c:forEach var="event" items="${events}">
-                                  <tr>
-                                    <td><a href="passed/${event.getId()}">${event.getName()}</a></td>
-                                    <td><a href="https://${event.getLinkedInLink()}">@linked</a></td>
-                                  </tr>
-                              </c:forEach>
-                          </tbody>
-                        </table>
+                    <c:choose>
+                        <c:when test="${events.isEmpty()}">
+                            <p>Oh, seems that there is no events</p>
+                        </c:when>
+                        <c:otherwise>
+                            <table class="table table-hover">
+                              <thead>
+                                <tr>
+                                  <th scope="col">Event</th>
+                                    <th scope="col">Linked Link</th>
+                                </tr>
+                              </thead>
+                                <tbody>
+                                      <c:forEach var="event" items="${events}">
+                                          <tr>
+                                            <td><a href="passed/${event.getId()}">${event.getName()}</a></td>
+                                            <td><a href="https://${event.getLinkedInLink()}">@linked</a></td>
+                                          </tr>
+                                      </c:forEach>
+                                  </tbody>
+                                </table>
+                       </c:otherwise>
+                    </c:choose>
             <div>
         </main>
         <script src="../webjars/jquery/3.0.0/jquery.min.js"></script>

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -32,7 +31,7 @@ public class User {
 
     public User() {
     }
-    // Use builder pattern to make different constructors
+
     public User(String name, String linkedInLink, String facebookLink, Set<Event> events) {
         this.name = name;
         this.linkedInLink = linkedInLink;
@@ -43,7 +42,6 @@ public class User {
         this.name = name;
         this.linkedInLink = linkedInLink;
     }
-
 
     public void setName(String name) {
         this.name = name;

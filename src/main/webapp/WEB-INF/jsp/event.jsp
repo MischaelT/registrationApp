@@ -12,6 +12,9 @@
                 <br>
                 <br>
                 <h1>Event ${events.get(0).getName()}</h1>
+                <p><button type="button">Change name</button></p>
+                <p><button type="button">Change passed/upcoming</button></p>
+
                 <br>
                 <br>
                 <h2>List of users</h2>
@@ -22,7 +25,8 @@
                           <c:choose>
                              <c:when test="${!(events.get(0).getIsPassed())}">
                                 <p>Would you like to add them? </p>
-                                <p> <a href="/events/upcoming/${id}/add_user/manually">Add new</a> </p>
+                                <p> <a href="/events/upcoming/${id}/add_user/manually">Add manually</a> </p>
+                                <p> <a href="/events/upcoming/${id}/add_user/automatically">Add automatically</a> </p>
                              </c:when>
                           </c:choose>
                     </c:when>
@@ -34,19 +38,31 @@
                               <th scope="col">Name</th>
                               <th scope="col">Linked</th>
                               <th scope="col">Facebook</th>
+                              <c:choose>
+                                 <c:when test="${!(events.get(0).getIsPassed())}">
+                                      <th scope="col">Present</th>
+                                 </c:when>
+                              </c:choose>
                             </tr>
                           </thead>
                           <tbody>
                                 <c:forEach var="user" items="${events.get(0).getUsers()}">
                                     <tr>
                                       <td><a href="../../users/user/${user.getId()}">${user.getName()}</a></td>
-                                      <td><a href="https://${user.getLinkedInLink()}">@linked</a></td>
-                                      <td><a href="https://${user.getFacebookLink()}">@facebook</a></td>
+                                      <td><a href="${user.getLinkedInLink()}">@linked</a></td>
+                                      <td><a href="${user.getFacebookLink()}">@facebook</a></td>
+                                        <c:choose>
+                                           <c:when test="${!(events.get(0).getIsPassed())}">
+                                                <td><input type="checkbox"/></td>
+                                           </c:when>
+                                        </c:choose>
                                     </tr>
                                 </c:forEach>
                             </tbody>
                           </table>
-
+                          <p><button type="button">submit</button></p>
+                          <br>
+                          <br>
                           <c:choose>
                              <c:when test="${!(events.get(0).getIsPassed())}">
                                 <p>Would you like to add more? </p>
