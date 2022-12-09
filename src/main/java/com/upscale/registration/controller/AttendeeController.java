@@ -1,8 +1,8 @@
 package com.upscale.registration.controller;
 
 
-import com.upscale.registration.model.User;
-import com.upscale.registration.repositories.UsersRepository;
+import com.upscale.registration.model.Attendee;
+import com.upscale.registration.repositories.AttendeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -16,20 +16,20 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-public class UserController {
+public class AttendeeController {
     @Autowired
-    private UsersRepository userRepository;
+    private AttendeeRepository attendeeRepository;
 
     @RequestMapping(value="/users/user/{id}", method = RequestMethod.GET)
     public ModelAndView showUser(@PathVariable long id, ModelMap model){
 
-        Map<String, Object> users_map = new HashMap<>();
+        Map<String, Object> attendeesMap = new HashMap<>();
         ModelAndView view = null;
 
-        if (userRepository.existsById(Long.valueOf(id))){
-            List<User> users =  userRepository.findById(id);
-            users_map.put("users", users);
-            view = new ModelAndView("user", users_map);
+        if (attendeeRepository.existsById(Long.valueOf(id))){
+            List<Attendee> attendees =  attendeeRepository.findById(id);
+            attendeesMap.put("attendees", attendees);
+            view = new ModelAndView("user", attendeesMap);
         } else{
             view = new ModelAndView("error");
         }
@@ -39,13 +39,13 @@ public class UserController {
     @RequestMapping(value="/users/user/{id}", method = RequestMethod.POST)
     public ModelAndView updateUser(@PathVariable long id, ModelMap model){
 
-        Map<String, Object> users_map = new HashMap<>();
+        Map<String, Object> attendeesMap = new HashMap<>();
         ModelAndView view = null;
 
-        if (userRepository.existsById(Long.valueOf(id))){
-            List<User> users =  userRepository.findById(id);
-            users_map.put("users", users);
-            view = new ModelAndView("user", users_map);
+        if (attendeeRepository.existsById(Long.valueOf(id))){
+            List<Attendee> attendees =  attendeeRepository.findById(id);
+            attendeesMap.put("attendees", attendees);
+            view = new ModelAndView("user", attendeesMap);
         } else{
             view = new ModelAndView("error");
         }

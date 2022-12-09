@@ -1,9 +1,9 @@
 package com.upscale.registration.controller;
 
 import com.upscale.registration.model.Event;
-import com.upscale.registration.model.User;
+import com.upscale.registration.model.Attendee;
 import com.upscale.registration.repositories.EventsRepository;
-import com.upscale.registration.repositories.UsersRepository;
+import com.upscale.registration.repositories.AttendeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -18,42 +18,42 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-public class UsersController {
+public class AttendeesController {
 
     @Autowired
-    private UsersRepository usersRepository;
+    private AttendeeRepository attendeeRepository;
     @Autowired
     private EventsRepository eventsRepository;
 
     @RequestMapping(value="/users", method = RequestMethod.GET)
     public ModelAndView showUsers(ModelMap model){
 
-        Map<String, Object> users_map = new HashMap<>();
-        List<User> users = (List<User>) usersRepository.findAll();
-        users_map.put("users", users);
+        Map<String, Object> attendeesMap = new HashMap<>();
+        List<Attendee> attendees = (List<Attendee>) attendeeRepository.findAll();
+        attendeesMap.put("attendees", attendees);
 
-        return new ModelAndView("users", users_map);
+        return new ModelAndView("attendees", attendeesMap);
     }
 
     @RequestMapping(value="/users/new_user/manually", method = RequestMethod.GET)
     public ModelAndView showAddUserPage(){
 
-        Map<String, Object> events_map = new HashMap<>();
+        Map<String, Object> EventMap = new HashMap<>();
         List<Event> events = eventsRepository.findByIsPassed(false);
-        events_map.put("upcoming_events", events);
+        EventMap.put("upcoming_events", events);
 
         //TODO implement transferring list of events to the view
 
-        ModelAndView modelAndView = new ModelAndView("new_user", "user", new User());
-        modelAndView.addObject("upcoming_events", events_map);
+        ModelAndView modelAndView = new ModelAndView("new_user", "user", new Attendee());
+        modelAndView.addObject("upcoming_events", EventMap);
 
         return modelAndView;
     }
 
     @RequestMapping(value="/users/new_user/manually", method = RequestMethod.POST)
-    public String addUserManually(@ModelAttribute("user") User user, BindingResult result, ModelMap model){
+    public String addUserManually(@ModelAttribute("user") Attendee attendee, BindingResult result, ModelMap model){
 
-        usersRepository.save(user);
+        attendeeRepository.save(attendee);
 
         return "success";
     }

@@ -17,8 +17,6 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAccessor;
 import java.util.*;
 
 
@@ -38,21 +36,21 @@ public class EventsController {
     @RequestMapping(value="/events/upcoming", method = RequestMethod.GET)
     public ModelAndView showUpcomingEventsPage(ModelMap model){
 
-        Map<String, Object> events_map = new HashMap<>();
+        Map<String, Object> eventsMap = new HashMap<>();
         List<Event> events = eventsRepository.findByIsPassed(false);
-        events_map.put("events", events);
+        eventsMap.put("events", events);
 
-        return new ModelAndView("upcoming", events_map);
+        return new ModelAndView("upcoming", eventsMap);
     }
 
     @RequestMapping(value="/events/passed", method = RequestMethod.GET)
     public ModelAndView showPassedEventsPage(ModelMap model){
 
-        Map<String, Object> events_map = new HashMap<>();
+        Map<String, Object> eventsMap = new HashMap<>();
         List<Event> events = eventsRepository.findByIsPassed(true);
-        events_map.put("events", events);
+        eventsMap.put("events", events);
 
-        return new ModelAndView("passed", events_map);
+        return new ModelAndView("passed", eventsMap);
     }
 
     @RequestMapping(value="/events/new_event", method = RequestMethod.GET)
@@ -80,8 +78,6 @@ public class EventsController {
 
     @RequestMapping(value="/events/statistics", method = RequestMethod.GET)
     public String showStatisticsPage(ModelMap model){
-
-        // TODO implement statistics by event
 
         return "statistics";
     }

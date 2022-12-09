@@ -1,6 +1,6 @@
 package com.upscale.registration.parser;
 
-import com.upscale.registration.model.User;
+import com.upscale.registration.model.Attendee;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -30,11 +30,12 @@ public class Parser {
         this.driver = new ChromeDriver();
     }
 
-    public List<User> runParsing(String eventPage){
+    public List<Attendee> runParsing(String eventPage){
         login(basePage);
-        List<User> userList = getEventAttendees(eventPage);
+        List<Attendee> attendeesList = getEventAttendees(eventPage);
+        getAttendeesInfo(attendeesList);
         driver.quit();
-        return userList;
+        return attendeesList;
     }
 
     private void login(String loginPage) {
@@ -54,7 +55,7 @@ public class Parser {
         login_button.click();
     }
 
-    private List<User> getEventAttendees(String event_page){
+    private List<Attendee> getEventAttendees(String event_page){
         driver.get(event_page);
         sleep(3);
 
@@ -63,15 +64,19 @@ public class Parser {
         sleep(3);
 
         List<WebElement> attendees = driver.findElements(By.className("reusable-search__result-container"));
-        List<User> new_users = new ArrayList<>();
+        List<Attendee> new_users = new ArrayList<>();
 
         for (WebElement element: attendees) {
             String name = element.getText().split("\n")[0];
             String link = element.findElement(By.className("app-aware-link")).getAttribute("href");
-            User new_user = new User(name, link);
+            Attendee new_user = new Attendee(name, link);
             new_users.add(new_user);
         }
         return new_users;
+    }
+
+    private void getAttendeesInfo(List<Attendee> attendees){
+
     }
 
     private void sleep(int seconds){

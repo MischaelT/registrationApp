@@ -30,7 +30,7 @@ public class Event {
     @JoinTable(name = "event_users",
             joinColumns = { @JoinColumn(name = "event_id") },
             inverseJoinColumns = { @JoinColumn(name = "user_id") })
-    private Set<User> users = new HashSet<>();
+    private Set<Attendee> attendees = new HashSet<>();
 
     public Event() {
     }
@@ -42,12 +42,12 @@ public class Event {
         this.isPassed = isPassed;
     }
 
-    public Set<User> getUsers() {
-        return users;
+    public Set<Attendee> getAttendees() {
+        return attendees;
     }
 
-    public void setUsers(Set<User> users) {
-        this.users = users;
+    public void setAttendees(Set<Attendee> attendees) {
+        this.attendees = attendees;
     }
 
     public String getName() {

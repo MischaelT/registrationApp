@@ -8,7 +8,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class Attendee {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_generator")
     @SequenceGenerator(name = "users_generator", sequenceName = "users_seq", allocationSize = 1)
@@ -29,16 +29,16 @@ public class User {
     @JsonIgnore
     private Set<Event> events = new HashSet<>();
 
-    public User() {
+    public Attendee() {
     }
 
-    public User(String name, String linkedInLink, String facebookLink, Set<Event> events) {
+    public Attendee(String name, String linkedInLink, String facebookLink, Set<Event> events) {
         this.name = name;
         this.linkedInLink = linkedInLink;
         this.facebookLink = facebookLink;
         this.events = events;
     }
-    public User(String name, String linkedInLink) {
+    public Attendee(String name, String linkedInLink) {
         this.name = name;
         this.linkedInLink = linkedInLink;
     }
