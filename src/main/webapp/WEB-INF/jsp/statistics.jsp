@@ -11,6 +11,7 @@
                 <br>
                 <br>
                 <h1> Statistics by all events </h1>
+                <h2> Move to account page? </h2>
                 <br>
                 <br>
                 <p> How much attendees is at average</p>

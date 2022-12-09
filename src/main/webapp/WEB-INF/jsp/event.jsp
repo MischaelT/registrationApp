@@ -12,16 +12,19 @@
                 <br>
                 <br>
                 <h1>Event ${events.get(0).getName()}</h1>
-                <p><button type="button">Change name</button></p>
-                <p><button type="button">Change passed/upcoming</button></p>
+                  <c:choose>
+                     <c:when test="${!(events.get(0).getIsPassed())}">
+                         <p><button type="button">Change name/status</button></p>
+                     </c:when>
+                  </c:choose>
 
                 <br>
                 <br>
-                <h2>List of users</h2>
+                <h2>List of attendees</h2>
 
                 <c:choose>
                     <c:when test="${events.get(0).getUsers().isEmpty()}">
-                        <p>Seems there is no users</p>
+                        <p>Seems there is no attendees</p>
                           <c:choose>
                              <c:when test="${!(events.get(0).getIsPassed())}">
                                 <p>Would you like to add them? </p>
@@ -60,7 +63,11 @@
                                 </c:forEach>
                             </tbody>
                           </table>
-                          <p><button type="button">submit</button></p>
+                        <c:choose>
+                           <c:when test="${!(events.get(0).getIsPassed())}">
+                                        <p><button type="button">submit</button></p>
+                                </c:when>
+                            </c:choose>
                           <br>
                           <br>
                           <c:choose>

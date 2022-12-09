@@ -15,13 +15,16 @@
                 <h1>User ${users.get(0).getName()}</h1>
                 <br>
                 <br>
+                 <p><button type="button">Change name/linkedin/facebook</button></p>
+                 <br>
+                 <br>
                 <p>This user attended such events:</p>
               <c:forEach var="event" items="${users.get(0).getEvents()}">
                   <tr>
                     <td>
                         <c:choose>
                             <c:when test="${event.getIsPassed() == true}">
-                                <a href="events/passed/${event.getId()}">${event.getName()}</a></td>
+                                <a href="/events/passed/${event.getId()}">${event.getName()}</a></td>
                             </c:when>
                             <c:otherwise>
                                 <a href="/events/upcoming/${event.getId()}">${event.getName()}</a></td>

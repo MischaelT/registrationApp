@@ -30,7 +30,7 @@ public class UserController {
         if (userRepository.existsById(Long.valueOf(id))){
             List<User> users =  userRepository.findById(id);
             users_map.put("users", users);
-            view = new ModelAndView("users", users_map);
+            view = new ModelAndView("user", users_map);
         } else{
             view = new ModelAndView("error");
         }
@@ -46,7 +46,7 @@ public class UserController {
         if (userRepository.existsById(Long.valueOf(id))){
             List<User> users =  userRepository.findById(id);
             users_map.put("users", users);
-            view = new ModelAndView("users", users_map);
+            view = new ModelAndView("user", users_map);
         } else{
             view = new ModelAndView("error");
         }
