@@ -1,7 +1,6 @@
 package com.upscale.registration.controller;
 
 
-import com.upscale.registration.model.Event;
 import com.upscale.registration.model.User;
 import com.upscale.registration.repositories.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,13 +50,10 @@ public class UserController {
             view = new ModelAndView("error");
         }
         return view;
-
     }
 
     @RequestMapping(value="/user/{id}/statistics", method = RequestMethod.GET)
     public String showStatisticsPage(@PathVariable long id, ModelMap model){
-
-        // TODO Implement statistics by user
 
         return "statistics";
     }

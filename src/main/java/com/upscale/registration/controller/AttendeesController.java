@@ -53,7 +53,6 @@ public class UsersController {
     @RequestMapping(value="/users/new_user/manually", method = RequestMethod.POST)
     public String addUserManually(@ModelAttribute("user") User user, BindingResult result, ModelMap model){
 
-
         usersRepository.save(user);
 
         return "success";
