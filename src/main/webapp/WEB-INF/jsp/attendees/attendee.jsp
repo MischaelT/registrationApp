@@ -3,23 +3,31 @@
 <html>
     <head>
         <link rel="stylesheet" href="../../webjars/bootstrap/4.0.0-2/css/bootstrap.min.css"/>
-        <title> User </title>
+        <title> Attendee </title>
     </head>
     <body>
-        <%@ include file="includes/navbar.jsp"%>
+        <%@ include file="../includes/navbar.jsp"%>
         <main role="main" class="container" >
             <div align="center">
                 <br>
                 <br>
                 <br>
-                <h1>User ${users.get(0).getName()}</h1>
+                <h1>User ${attendees.get(0).getName()}</h1>
                 <br>
                 <br>
-                 <p><button type="button">Change name/linkedin/facebook</button></p>
+                <p>${attendee.getLinkedInLink()}</p>
+                <p>${attendee.getFacebookLink()}</p>
+                <p>${attendee.getEmailAddress()}</p>
+                <p>${attendee.getCurrentPosition()}</p>
+                <p>${attendee.getCurrentCompany()}</p>
+                <p>${attendee.getLocation()}</p>
+                <br>
+                <br>
+                 <p><a href="/attendees/attendee/${id}/change_info"><button type="button">Change data</button></a></p>
                  <br>
                  <br>
                 <p>This user attended such events:</p>
-              <c:forEach var="event" items="${users.get(0).getEvents()}">
+              <c:forEach var="event" items="${attendee.getEvents()}">
                   <tr>
                     <td>
                         <c:choose>
@@ -29,10 +37,13 @@
                             <c:otherwise>
                                 <a href="/events/upcoming/${event.getId()}">${event.getName()}</a></td>
                            </c:otherwise>
-                           </c:choose>
-                     </td>
+                        </c:choose>
+                    </td>
                   </tr>
               </c:forEach>
+              <br>
+              <br>
+              <h2> Some other statistics </h2>
             <div>
         </main>
         <script src="../../webjars/jquery/3.0.0/jquery.min.js"></script>

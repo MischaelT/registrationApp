@@ -5,7 +5,7 @@
         <title> New Event</title>
     </head>
     <body>
-        <%@ include file="includes/navbar.jsp"%>
+        <%@ include file="../includes/navbar.jsp"%>
         <main role="main" class="container" >
             <div align="center">
                 <br>

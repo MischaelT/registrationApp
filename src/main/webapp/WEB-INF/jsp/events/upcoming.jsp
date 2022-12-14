@@ -1,40 +1,46 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <html>
     <head>
         <link rel="stylesheet" href="../webjars/bootstrap/4.0.0-2/css/bootstrap.min.css"/>
-        <title> Passed Events </title>
+        <title>Upcoming Events </title>
     </head>
     <body>
-        <%@ include file="includes/navbar.jsp"%>
+
+        <%@ include file="../includes/navbar.jsp"%>
+
         <main role="main" class="container" >
             <div align="center">
                     <br>
                     <br>
                     <br>
-                    <h1>List of Passed Events</h1>
+                    <h1>List of upcoming Events</h1>
                     <br>
                     <c:choose>
                         <c:when test="${events.isEmpty()}">
-                            <p>Oh, seems that there is no events</p>
+                            <p>Seems there is no upcoming events</p>
+                            <p>Would you like to add new? </p>
+                            <p> <a href="/events/new_event">Add</a> </p>
                         </c:when>
                         <c:otherwise>
+
                             <table class="table table-hover">
                               <thead>
                                 <tr>
                                   <th scope="col">Event</th>
-                                    <th scope="col">Linked Link</th>
+                                   <th scope="col">Linked Link</th>
                                 </tr>
                               </thead>
                                 <tbody>
                                       <c:forEach var="event" items="${events}">
                                           <tr>
-                                            <td><a href="passed/${event.getId()}">${event.getName()}</a></td>
+                                            <td><a href="upcoming/${event.getId()}">${event.getName()}</a></td>
                                             <td><a href="https://${event.getLinkedInLink()}">@linked</a></td>
                                           </tr>
                                       </c:forEach>
                                   </tbody>
                                 </table>
-                       </c:otherwise>
+                        </c:otherwise>
                     </c:choose>
             <div>
         </main>

@@ -25,18 +25,18 @@ public class AttendeesController {
     @Autowired
     private EventsRepository eventsRepository;
 
-    @RequestMapping(value="/users", method = RequestMethod.GET)
-    public ModelAndView showUsers(ModelMap model){
+    @RequestMapping(value="/attendees", method = RequestMethod.GET)
+    public ModelAndView showAttendees(ModelMap model){
 
         Map<String, Object> attendeesMap = new HashMap<>();
         List<Attendee> attendees = (List<Attendee>) attendeeRepository.findAll();
         attendeesMap.put("attendees", attendees);
 
-        return new ModelAndView("attendees", attendeesMap);
+        return new ModelAndView("attendees/attendees", attendeesMap);
     }
 
-    @RequestMapping(value="/users/new_user/manually", method = RequestMethod.GET)
-    public ModelAndView showAddUserPage(){
+    @RequestMapping(value="/attendees/new_attendee/manually", method = RequestMethod.GET)
+    public ModelAndView showAddAttendeePage(){
 
         Map<String, Object> EventMap = new HashMap<>();
         List<Event> events = eventsRepository.findByIsPassed(false);
@@ -44,17 +44,15 @@ public class AttendeesController {
 
         //TODO implement transferring list of events to the view
 
-        ModelAndView modelAndView = new ModelAndView("new_user", "user", new Attendee());
+        ModelAndView modelAndView = new ModelAndView("attendees/new_attendee_manually", "attendee", new Attendee());
         modelAndView.addObject("upcoming_events", EventMap);
 
         return modelAndView;
     }
 
-    @RequestMapping(value="/users/new_user/manually", method = RequestMethod.POST)
-    public String addUserManually(@ModelAttribute("user") Attendee attendee, BindingResult result, ModelMap model){
-
+    @RequestMapping(value="/attendees/new_attendee/manually", method = RequestMethod.POST)
+    public String addAttendeeManually(@ModelAttribute("attendee") Attendee attendee, BindingResult result, ModelMap model){
         attendeeRepository.save(attendee);
-
         return "success";
     }
 }

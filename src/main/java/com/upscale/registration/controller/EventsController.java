@@ -40,7 +40,7 @@ public class EventsController {
         List<Event> events = eventsRepository.findByIsPassed(false);
         eventsMap.put("events", events);
 
-        return new ModelAndView("upcoming", eventsMap);
+        return new ModelAndView("events/upcoming", eventsMap);
     }
 
     @RequestMapping(value="/events/passed", method = RequestMethod.GET)
@@ -50,7 +50,7 @@ public class EventsController {
         List<Event> events = eventsRepository.findByIsPassed(true);
         eventsMap.put("events", events);
 
-        return new ModelAndView("passed", eventsMap);
+        return new ModelAndView("events/passed", eventsMap);
     }
 
     @RequestMapping(value="/events/new_event", method = RequestMethod.GET)
@@ -78,7 +78,6 @@ public class EventsController {
 
     @RequestMapping(value="/events/statistics", method = RequestMethod.GET)
     public String showStatisticsPage(ModelMap model){
-
         return "statistics";
     }
 

@@ -23,10 +23,10 @@
                       </thead>
 
                         <tbody>
-                              <c:forEach var="user" items="${new_users}">
+                              <c:forEach var="attendee" items="${new_attendees}">
                                   <tr>
                                     <td><a>${user.getName()}</a></td>
-                                    <td><a href="${user.getLinkedInLink()}">@linked</a></td>
+                                    <td><a href="${attendee.getLinkedInLink()}">@linked</a></td>
                                   </tr>
                               </c:forEach>
                           </tbody>

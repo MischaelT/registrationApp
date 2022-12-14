@@ -27,9 +27,9 @@ public class Event {
                     CascadeType.PERSIST,
                     CascadeType.MERGE
             })
-    @JoinTable(name = "event_users",
+    @JoinTable(name = "event_attendee",
             joinColumns = { @JoinColumn(name = "event_id") },
-            inverseJoinColumns = { @JoinColumn(name = "user_id") })
+            inverseJoinColumns = { @JoinColumn(name = "attendee_id") })
     private Set<Attendee> attendees = new HashSet<>();
 
     public Event() {

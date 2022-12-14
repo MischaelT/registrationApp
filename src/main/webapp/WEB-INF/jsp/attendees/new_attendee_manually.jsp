@@ -5,7 +5,7 @@
         <title> New User</title>
     </head>
     <body>
-        <%@ include file="includes/navbar.jsp"%>
+        <%@ include file="../includes/navbar.jsp"%>
         <main role="main" class="container" >
             <div align="center">
                 <br>
@@ -14,7 +14,7 @@
                 <h1>Add new user</h1>
                 <br>
                 <form:form method="POST"
-                  action="/events/upcoming/${id}/add_user/manually" modelAttribute="user">
+                  action="/events/upcoming/${id}/new_attendee/manually" modelAttribute="attendee">
                      <table>
                         <p>
                             <tr>

@@ -6,15 +6,15 @@
         <title> Users </title>
     </head>
     <body>
-        <%@ include file="includes/navbar.jsp"%>
+        <%@ include file="../includes/navbar.jsp"%>
         <main role="main" class="container" >
             <div align="center">
                     <br>
                     <br>
                     <br>
-                    <h1>List of users from database</h1>
+                    <h1>List of attendee from database</h1>
                     <br>
-                    <p><input type="text" placeholder="Search by user..."> <button type="button">submit</button></p>
+                    <p><input type="text" placeholder="Search by attendee..."> <button type="button">submit</button></p>
                     <br>
                     <br>
                         <table class="table table-hover">
@@ -26,11 +26,11 @@
                             </tr>
                           </thead>
                           <tbody>
-                                <c:forEach var="user" items="${users}">
+                                <c:forEach var="attendee" items="${attendees}">
                                     <tr>
-                                      <td><a href="../../users/user/${user.getId()}">${user.getName()}</a></td>
-                                      <td><a href="${user.getLinkedInLink()}">@linked</a></td>
-                                      <td><a href="${user.getFacebookLink()}">@facebook</a></td>
+                                      <td><a href="../../attendees/attendee/${attendee.getId()}">${attendee.getName()}</a></td>
+                                      <td><a href="${attendee.getLinkedInLink()}">@linked</a></td>
+                                      <td><a href="${attendee.getFacebookLink()}">@facebook</a></td>
                                     </tr>
                                 </c:forEach>
                             </tbody>

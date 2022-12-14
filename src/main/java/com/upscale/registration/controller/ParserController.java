@@ -1,7 +1,7 @@
 package com.upscale.registration.controller;
 
 import com.upscale.registration.model.Event;
-import com.upscale.registration.model.Form;
+import com.upscale.registration.forms.Form;
 import com.upscale.registration.model.Attendee;
 import com.upscale.registration.parser.Parser;
 import com.upscale.registration.repositories.EventsRepository;
@@ -27,37 +27,60 @@ public class ParserController {
     @Autowired
     private AttendeeRepository attendeeRepository;
 
-    @RequestMapping(value="/events/upcoming/{id}/add_attendee/automatically", method = RequestMethod.GET)
+    @RequestMapping(value="/events/upcoming/{id}/new_attendee/automatically", method = RequestMethod.GET)
     public ModelAndView showAddUserAutomaticallyForm(@PathVariable int id, @ModelAttribute("form_content") Form form,
                                                      BindingResult result, ModelMap model){
-        return new ModelAndView("new_user_automatically", "form_content", new Form());
+        return new ModelAndView("attendees/new_attendee_automatically", "form_content", new Form());
     }
 
-    @RequestMapping(value="/events/upcoming/{id}/add_attendee/automatically", method = RequestMethod.POST)
-    public RedirectView AddUserAutomatically(@PathVariable int id, @ModelAttribute("form_content") Form form,
+    @RequestMapping(value="/events/upcoming/{id}/new_attendee/automatically", method = RequestMethod.POST)
+    public RedirectView AddAttendeeAutomatically(@PathVariable int id, @ModelAttribute("form_content") Form form,
                                              BindingResult result, ModelMap model){
 
         Parser parser = new Parser("m.kouzin@upscale-labs.com","VeryStrongPassword");
         String linked_link = form.getContent();
-        List<Attendee> parsedAttendees = parser.runParsing(linked_link);
+        List<Attendee> parsedAttendees = parser.runEventParsing(linked_link);
 
         HashSet<Event> events = new HashSet<>(eventsRepository.findById(id));
 
-        for (Attendee user: parsedAttendees){
-            user.setEvents(events);
-            user.setFacebookLink("");
-            attendeeRepository.save(user);
+        for (Attendee attendee: parsedAttendees){
+            attendee.setEvents(events);
+            attendee.setFacebookLink("");
+            attendeeRepository.save(attendee);
         }
 
         Event event = eventsRepository.findById(id).get(0);
-        HashSet<Attendee> oldUsers = new HashSet<>();
-        oldUsers.addAll(event.getAttendees());
-        HashSet<Attendee> newUsers = new HashSet<>(parsedAttendees);
-        oldUsers.addAll(newUsers);
-        event.setAttendees(oldUsers);
+        HashSet<Attendee> oldAttendees = new HashSet<>();
+        oldAttendees.addAll(event.getAttendees());
+        HashSet<Attendee> newAttendees = new HashSet<>(parsedAttendees);
+        oldAttendees.addAll(newAttendees);
+        event.setAttendees(oldAttendees);
 
         eventsRepository.save(event);
 
         return new RedirectView("/events/upcoming/{id}");
+    }
+
+    @RequestMapping(value="/attendees/attendee/{id}/change_info/automatically", method = RequestMethod.POST)
+    public RedirectView collectAttendeeInfoAutomatically(@PathVariable long id, ModelMap model){
+
+        RedirectView view = null;
+
+        if (attendeeRepository.existsById(Long.valueOf(id))){
+            Attendee attendee = attendeeRepository.findById(id).get(0);
+            String attendeeLink = attendee.getLinkedInLink();
+            Parser parser = new Parser("m.kouzin@upscale-labs.com","VeryStrongPassword");
+            Attendee updatedAttendee = parser.getAttendeeInformation("https://" + attendeeLink);
+            attendee.setLocation(updatedAttendee.getLocation());
+            attendee.setCurrentPosition(updatedAttendee.getCurrentPosition());
+            attendee.setCurrentCompany(updatedAttendee.getCurrentCompany());
+            attendee.setEmailAddress(updatedAttendee.getEmailAddress());
+            attendeeRepository.save(attendee);
+            view = new RedirectView("/attendees/attendee/{id}");
+
+        } else{
+            view = new RedirectView("error");
+        }
+        return view;
     }
 }

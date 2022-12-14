@@ -1,4 +1,4 @@
-package com.upscale.registration.model;
+package com.upscale.registration.forms;
 
 public class Form {
     private String content;

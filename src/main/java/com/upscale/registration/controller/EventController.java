@@ -27,15 +27,10 @@ public class EventController {
 
     @RequestMapping(value="/events/upcoming/{id}", method = RequestMethod.GET)
     public ModelAndView showUpcomingEvent(@PathVariable int id, ModelMap model){
-
-        Map<String, Object> eventsMap = new HashMap<>();
-
         ModelAndView view ;
-
         if (eventsRepository.existsById(Long.valueOf(id))){
-            List<Event> events =  eventsRepository.findById(id);
-            eventsMap.put("events", events);
-             view = new ModelAndView("event", eventsMap);
+            Event event =  eventsRepository.findById(id).get(0);
+             view = new ModelAndView("events/event", "event", event);
         } else{
              view = new ModelAndView("error");
         }
@@ -44,47 +39,42 @@ public class EventController {
 
     @RequestMapping(value="/events/passed/{id}", method = RequestMethod.GET)
     public ModelAndView showPassedEvent(@PathVariable long id, ModelMap model) {
-
-        Map<String, Object> eventsMap = new HashMap<>();
-
         ModelAndView view = null;
-
         if (eventsRepository.existsById(Long.valueOf(id))){
-            List<Event> events =  eventsRepository.findById(id);
-            eventsMap.put("events", events);
-            view = new ModelAndView("event", eventsMap);
+            Event event =  eventsRepository.findById(id).get(0);
+            view = new ModelAndView("events/event", "event", event);
         } else{
             view = new ModelAndView("error");
         }
         return view;
     }
 
-    @RequestMapping(value="/events/upcoming/{id}/add_attendee/manually", method = RequestMethod.GET)
-    public ModelAndView showAddUserManuallyForm(@PathVariable int id, ModelMap model){
-        return new ModelAndView("new_user", "user", new Attendee());
+    @RequestMapping(value="/events/upcoming/{id}/new_attendee/manually", method = RequestMethod.GET)
+    public ModelAndView showAddAttendeeManuallyForm(@PathVariable int id, ModelMap model){
+        return new ModelAndView("attendees/new_attendee_manually", "attendee", new Attendee());
     }
 
-    @RequestMapping(value="/events/upcoming/{id}/add_attendee/manually", method = RequestMethod.POST)
-    public RedirectView addUserManually(@PathVariable int id, @ModelAttribute("user") Attendee user, BindingResult result, ModelMap model){
+    @RequestMapping(value="/events/upcoming/{id}/new_attendee/manually", method = RequestMethod.POST)
+    public RedirectView addAttendeeManually(@PathVariable int id, @ModelAttribute("attendee") Attendee attendee, BindingResult result, ModelMap model){
 
-        String link = user.getLinkedInLink();
+        String link = attendee.getLinkedInLink();
         String[] splittedLink = link.split("//");
         boolean httpsPresent = splittedLink.length == 2;
 
         if (httpsPresent){
-            user.setLinkedInLink(splittedLink[1]);
+            attendee.setLinkedInLink(splittedLink[1]);
         }
 
         RedirectView view = null;
 
-        boolean userNotInDatabase = attendeeRepository.findByNameAndLinkedInLink(user.getName(), user.getLinkedInLink()).isEmpty();
+        boolean attendeeNotInDatabase = attendeeRepository.findByNameAndLinkedInLink(attendee.getName(), attendee.getLinkedInLink()).isEmpty();
 
-        if (eventsRepository.existsById(Long.valueOf(id))&(userNotInDatabase)){
+        if (eventsRepository.existsById(Long.valueOf(id))&(attendeeNotInDatabase)){
 
             List<Event> events = eventsRepository.findById(id);
             Event event = events.get(0);
             Set<Attendee> attendeeList = event.getAttendees();
-            attendeeList.add(user);
+            attendeeList.add(attendee);
             event.setAttendees(attendeeList);
             eventsRepository.save(event);
             view = new RedirectView("/events/upcoming/{id}");
@@ -92,6 +82,37 @@ public class EventController {
             view = new RedirectView("/error");
         }
         return view;
+    }
 
+    @RequestMapping(value="/events/upcoming/{id}/change_data", method = RequestMethod.GET)
+    public ModelAndView showChangeDataUpcomingPage(@PathVariable int id, ModelMap model){
+
+        ModelAndView view;
+
+        if (eventsRepository.existsById(Long.valueOf(id))){
+            Event event =  eventsRepository.findById(id).get(0);
+            view = new ModelAndView("events/change_event_info", "event", event);
+        } else{
+            view = new ModelAndView("error");
+        }
+        return view;
+    }
+
+    @RequestMapping(value="/events/upcoming/{id}/change_data", method = RequestMethod.POST)
+    public RedirectView changeDataUpcomingEvent(@PathVariable int id, @ModelAttribute("event")Event event,
+                                                BindingResult result, ModelMap model){
+        RedirectView view;
+        if (eventsRepository.existsById(Long.valueOf(id))){
+            Event eventDb = eventsRepository.findById(id).get(0);
+            eventDb.setIsPassed(event.getIsPassed());
+            eventDb.setDate(event.getDate());
+            eventDb.setLinkedInLink(event.getLinkedInLink());
+            eventDb.setName(event.getName());
+            eventsRepository.save(eventDb);
+            view = new RedirectView("/events/upcoming/{id}");
+            } else{
+            view = new RedirectView("error");
+        }
+        return view;
     }
 }

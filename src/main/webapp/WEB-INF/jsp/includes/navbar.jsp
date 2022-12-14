@@ -19,17 +19,12 @@
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Users</a>
         <div class="dropdown-menu" aria-labelledby="dropdown01">
-          <a class="dropdown-item" href="/users"> All </a>
+          <a class="dropdown-item" href="/attendees"> All </a>
         </div>
       </li>
-
-      <li class="nav-item">
-        <a class="nav-link" href="/events/statistics">Statistics</a>
-      </li>
-
     </ul>
 
-      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Account</button>
+      <a href="/account"><button class="btn btn-secondary" type="submit">Account</button> </a>
 
   </div>
 </nav>

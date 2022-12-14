@@ -7,29 +7,41 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "users")
+@Table(name = "attendees")
 public class Attendee {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_generator")
-    @SequenceGenerator(name = "users_generator", sequenceName = "users_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "attendees_generator")
+    @SequenceGenerator(name = "attendees_generator", sequenceName = "attendee_seq", allocationSize = 1)
     private long id;
-    @Column(name = "user_name")
+    @Column(name = "attendee_name")
     private String name;
     @Column(name = "linkedin_link")
     private String linkedInLink;
     @Column(name = "facebook_link")
     private String facebookLink;
+    @Column(name = "email_address")
+    private String emailAddress;
+    @Column(name = "current_position")
+    private String currentPosition;
+    @Column(name = "current_company")
+    private String currentCompany;
+    @Column(name = "location")
+    private String location;
 
     @ManyToMany(fetch = FetchType.LAZY,
             cascade = {
                     CascadeType.PERSIST,
                     CascadeType.MERGE
             },
-            mappedBy = "users")
+            mappedBy = "attendees")
     @JsonIgnore
     private Set<Event> events = new HashSet<>();
 
     public Attendee() {
+    }
+
+    public Attendee(String name) {
+        this.name = name;
     }
 
     public Attendee(String name, String linkedInLink, String facebookLink, Set<Event> events) {
@@ -78,4 +90,38 @@ public class Attendee {
     public void setEvents(Set<Event> events) {
         this.events = events;
     }
+
+    public String getCurrentPosition() {
+        return currentPosition;
+    }
+
+    public void setCurrentPosition(String currentPosition) {
+        this.currentPosition = currentPosition;
+    }
+
+    public String getCurrentCompany() {
+        return currentCompany;
+    }
+
+    public void setCurrentCompany(String currentCompany) {
+        this.currentCompany = currentCompany;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
 }
+
+

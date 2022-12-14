@@ -5,7 +5,7 @@
         <title> Add user </title>
     </head>
     <body>
-        <%@ include file="includes/navbar.jsp"%>
+        <%@ include file="../includes/navbar.jsp"%>
         <main role="main" class="container" >
             <div align="center">
                 <br>
@@ -14,7 +14,7 @@
                 <h1> Add users automatically to the event with id ${id} </h1>
                 <br>
                 <br>
-                <form:form method="POST" action="/events/upcoming/${id}/add_user/automatically"
+                <form:form method="POST" action="/events/upcoming/${id}/new_attendee/automatically"
                  modelAttribute="form_content">
                   <table>
                      <tr>
