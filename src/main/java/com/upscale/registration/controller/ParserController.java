@@ -68,19 +68,23 @@ public class ParserController {
 
         if (attendeeRepository.existsById(Long.valueOf(id))){
             Attendee attendee = attendeeRepository.findById(id).get(0);
-            String attendeeLink = attendee.getLinkedInLink();
             Parser parser = new Parser("m.kouzin@upscale-labs.com","VeryStrongPassword");
-            Attendee updatedAttendee = parser.getAttendeeInformation("https://" + attendeeLink);
-            attendee.setLocation(updatedAttendee.getLocation());
-            attendee.setCurrentPosition(updatedAttendee.getCurrentPosition());
-            attendee.setCurrentCompany(updatedAttendee.getCurrentCompany());
-            attendee.setEmailAddress(updatedAttendee.getEmailAddress());
-            attendeeRepository.save(attendee);
+            Attendee newAttendee = parser.getAttendeeInformation(attendee);
+            attendeeRepository.save(newAttendee);
             view = new RedirectView("/attendees/attendee/{id}");
-
         } else{
             view = new RedirectView("error");
         }
         return view;
+    }
+
+    private Attendee httpPresent(String link, Attendee attendee){
+        String[] splittedLink = link.split("//");
+        boolean httpsPresent = splittedLink.length == 2;
+
+        if (httpsPresent){
+            attendee.setLinkedInLink(splittedLink[1]);
+        }
+        return attendee;
     }
 }

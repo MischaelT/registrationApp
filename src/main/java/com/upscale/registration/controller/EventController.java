@@ -58,12 +58,7 @@ public class EventController {
     public RedirectView addAttendeeManually(@PathVariable int id, @ModelAttribute("attendee") Attendee attendee, BindingResult result, ModelMap model){
 
         String link = attendee.getLinkedInLink();
-        String[] splittedLink = link.split("//");
-        boolean httpsPresent = splittedLink.length == 2;
 
-        if (httpsPresent){
-            attendee.setLinkedInLink(splittedLink[1]);
-        }
 
         RedirectView view = null;
 
@@ -115,4 +110,5 @@ public class EventController {
         }
         return view;
     }
+
 }

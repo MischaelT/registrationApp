@@ -35,6 +35,9 @@
                                 </c:forEach>
                             </tbody>
                           </table>
+                      <p>Would you like to add more? </p>
+                      <p> <a href="/attendees/new_attendee/manually"> Add manually </a> </p>
+                      <p> <a href="/attendees/new_attendee/automatically"> Add automatically </a> </p>
             <div>
         </main>
         <script src="../../../webjars/jquery/3.0.0/jquery.min.js"></script>

@@ -27,11 +27,12 @@ public class Parser {
     private static final String ATTENDEE_POSITION_COMPANY_XPATH = "//*[@id=\"main\"]/section/div[2]/div[2]/div[1]/div[2]";
     private static final String ATTENDEE_LOCATION_XPATH = "//*[@id=\"main\"]/section/div[2]/div[2]/div[2]/span[1]";
 
+    private static final String ATTENDEE_COMPANY_XPATH = "//*[@id=\"main\"]/section/div[2]/div[2]/ul/li[1]";
 
     private static  final String ATTENDEE_CONTACT_INFO_ID = "top-card-text-details-contact-info";
     private static final String ATTENDEE_NAME_ID = "pv-contact-info";
-    private static final String ATTENDEE_EMAIL_CLASS = "ci-email";
-    private static final String ATTENDEE_EMAIL_XPATH = "//*[@class=\"ci-email\"]/div";
+
+    private static final String ATTENDEE_EMAIL_XPATH = "//*[@class=\"pv-contact-info__contact-type ci-email\"]/div";
 
     private static final int TIME_TO_SLEEP = 3;
 
@@ -60,7 +61,12 @@ public class Parser {
 
         List<Attendee> attendees = new ArrayList<>();
         for (String attendeeLink: attendeesLinks) {
-            Attendee attendee = getAttendeeInfo(attendeeLink);
+            Attendee attendee = new Attendee();
+
+            httpPresent(attendeeLink, attendee);
+
+            getAttendeeInfo(attendee);
+
             attendees.add(attendee);
         }
 
@@ -68,12 +74,12 @@ public class Parser {
         return attendees;
     }
 
-    public Attendee getAttendeeInformation(String linkedLink){
+    public Attendee getAttendeeInformation(Attendee attendee){
         login(basePage);
         sleep(TIME_TO_SLEEP);
-        Attendee attendee = getAttendeeInfo(linkedLink);
+        Attendee updatedAttendee = getAttendeeInfo(attendee);
         driver.quit();
-        return attendee;
+        return updatedAttendee;
     }
 
     private void login(String loginPage) {
@@ -112,45 +118,54 @@ public class Parser {
         return newAttendees;
     }
 
-    private Attendee getAttendeeInfo(String attendeeLink){
+    private Attendee getAttendeeInfo(Attendee attendee){
 
-        driver.get(attendeeLink);
+        getGeneralInfo(attendee);
+        getContactInfo(attendee);
+
+        return attendee;
+    }
+
+    private Attendee getGeneralInfo(Attendee attendee){
+
+        driver.get(attendee.getLinkedInLink());
         sleep(TIME_TO_SLEEP);
         String companyAndPosition = driver.findElement(By.xpath(ATTENDEE_POSITION_COMPANY_XPATH)).getText();
         System.out.println(companyAndPosition);
         sleep(TIME_TO_SLEEP);
+        String company = driver.findElement(By.xpath(ATTENDEE_COMPANY_XPATH)).getText();
+        System.out.println(company);
+        sleep(TIME_TO_SLEEP);
         String currentLocation = driver.findElement(By.xpath(ATTENDEE_LOCATION_XPATH)).getText();
         System.out.println(currentLocation);
         sleep(TIME_TO_SLEEP);
+
+        attendee.setCurrentPosition(companyAndPosition);
+        attendee.setCurrentCompany(company);
+        attendee.setLocation(currentLocation);
+
+        return attendee;
+    }
+
+    private Attendee getContactInfo(Attendee attendee){
         WebElement contactInfoLink = driver.findElement(By.id(ATTENDEE_CONTACT_INFO_ID));
         sleep(TIME_TO_SLEEP);
         contactInfoLink.click();
         sleep(TIME_TO_SLEEP);
         String name = driver.findElement(By.id(ATTENDEE_NAME_ID)).getText();
         sleep(TIME_TO_SLEEP);
-//        String emailAddress = driver.findElement(By.xpath(ATTENDEE_EMAIL_XPATH)).getText();
-        Attendee newAttendee = new Attendee(name, attendeeLink);
-//        newAttendee.setEmailAddress(emailAddress);
-
-        determineCompanyLocation(companyAndPosition, newAttendee);
-        newAttendee.setLocation(currentLocation);
-
-        return newAttendee;
-    }
-
-    private void determineCompanyLocation(String companyPosition, Attendee attendee){
-        String[] list = companyPosition.split("at");
-        System.out.println(list);
-        String position = "";
-        String company = "";
-
-        if (list.length == 1) {
-            attendee.setCurrentPosition(list[0]);
-        }else{
-            attendee.setCurrentPosition(list[0]);
-            attendee.setCurrentCompany(list[1]);
+        String emailAddress = "";
+        try {
+            emailAddress = driver.findElement(By.xpath(ATTENDEE_EMAIL_XPATH)).getText();
+        } catch (Exception exc){
+            System.out.println(exc);
         }
+        attendee.setEmailAddress(emailAddress);
+        attendee.setName(name);
+
+        return attendee;
     }
+
 
     private void sleep(int seconds){
         try {
@@ -158,5 +173,15 @@ public class Parser {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private Attendee httpPresent(String link, Attendee attendee){
+        String[] splittedLink = link.split("//");
+        boolean httpsPresent = splittedLink.length == 2;
+
+        if (httpsPresent){
+            attendee.setLinkedInLink(splittedLink[1]);
+        }
+        return attendee;
     }
 }

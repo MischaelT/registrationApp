@@ -12,7 +12,7 @@
                 <br>
                 <br>
                 <br>
-                <h1>User ${attendees.get(0).getName()}</h1>
+                <h1>Attendee  ${attendees.get(0).getName()}</h1>
                 <br>
                 <br>
                 <p>${attendee.getLinkedInLink()}</p>
