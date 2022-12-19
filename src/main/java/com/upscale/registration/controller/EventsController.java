@@ -55,7 +55,7 @@ public class EventsController {
 
     @RequestMapping(value="/events/new_event", method = RequestMethod.GET)
     public ModelAndView showNewEventForm(){
-        return new ModelAndView("new_event", "event", new Event());
+        return new ModelAndView("events/new_event", "event", new Event());
     }
 
     @RequestMapping(value="/events/new_event", method = RequestMethod.POST)

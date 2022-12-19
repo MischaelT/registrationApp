@@ -54,21 +54,21 @@ public class AttendeeController {
         return view;
     }
 
-    @RequestMapping(value="/attendees/attendee/{id}/change_info", method = RequestMethod.GET)
+    @RequestMapping(value="/attendees/attendee/{id}/update", method = RequestMethod.GET)
     public ModelAndView showAttendeeChangeInfoPage(@PathVariable long id, ModelMap model){
 
         ModelAndView view = null;
 
         if (attendeeRepository.existsById(Long.valueOf(id))){
             Attendee attendee =  attendeeRepository.findById(id).get(0);
-            view = new ModelAndView("attendees/change_attendee_info", "attendee", attendee);
+            view = new ModelAndView("attendees/update_attendee", "attendee", attendee);
         } else{
             view = new ModelAndView("error");
         }
         return view;
     }
 
-    @RequestMapping(value="/attendees/attendee/{id}/change_info", method = RequestMethod.POST)
+    @RequestMapping(value="/attendees/attendee/{id}/update", method = RequestMethod.POST)
     public RedirectView ChangeAttendeeInfo(@PathVariable long id, @ModelAttribute("attendee")Attendee attendee,
                                            BindingResult result, ModelMap model){
 

@@ -1,4 +1,5 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+
 <html>
     <head>
         <meta charset="utf-8" />
@@ -9,7 +10,7 @@
         <link rel="stylesheet" href="/css/styles.css"/>
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
-        <title>New event</title>
+        <title>Welcome</title>
     </head>
     <body class="sb-nav-fixed">
         <%@ include file="../includes/navbar.jsp"%>
@@ -21,27 +22,34 @@
                         <br>
                         <br>
                         <br>
-                        <h1>Add new event</h1>
+                        <br>
+                        <br>
+                        <h1> Change attendee data<h1>
                         <br>
                         <form:form method="POST"
-                          action="/events/new_event" modelAttribute="event">
+                          action="/attendees/attendee/${id}/update" modelAttribute="attendee">
                              <table>
                                 <tr>
                                     <td><form:label path="name">Name</form:label></td>
-                                    <td><form:input path="name"/></td>
+                                    <td><form:input path="name" value="${attendee.getName()}"/></td>
                                 </tr>
                                 <tr>
-                                    <td><form:label path="date">Date</form:label></td>
-                                    <td><form:input path="date" type="date"/></td>
-                                </tr>
-                                <tr>
-                                    <td><form:label path="linkedInLink">LinkedIn link</form:label></td>
-                                    <td><form:input path="linkedInLink"/></td>
+                                    <td><form:label path="linkedInLink">Link</form:label></td>
+                                    <td><form:input path="linkedInLink" type="text" value="${attendee.getLinkedInLink()}"/></td>
                                 </tr>
                                 <tr>
                                     <td><input type="submit" value="Submit"/></td>
                                 </tr>
                             </table>
+                        </form:form>
+
+                        <form:form method="POST" action="/attendees/attendee/${id}/update/automatically" modelAttribute="form_content">
+                          <p> Would you like to collect some information automatically? </p>
+                              <table>
+                                 <tr>
+                                    <td><input type="submit" value="Lets do it!"/></td>
+                                 </tr>
+                                </table>
                         </form:form>
                     <div>
                 </main>
