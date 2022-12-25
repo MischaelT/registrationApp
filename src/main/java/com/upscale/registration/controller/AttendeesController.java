@@ -6,6 +6,7 @@ import com.upscale.registration.repositories.EventsRepository;
 import com.upscale.registration.repositories.AttendeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -36,16 +37,16 @@ public class AttendeesController {
     }
 
     @RequestMapping(value="/attendees/new_attendee/manually", method = RequestMethod.GET)
-    public ModelAndView showAddAttendeePage(){
+    public ModelAndView showAddAttendeePage(Model model){
 
-        Map<String, Object> EventMap = new HashMap<>();
+        Map<String, Object> eventMap = new HashMap<>();
+
         List<Event> events = eventsRepository.findByIsPassed(false);
-        EventMap.put("upcoming_events", events);
+        model.addAttribute("upcoming_events", events);
 
-        //TODO implement transferring list of events to the view
+        model.addAttribute("fromEvent", false);
 
         ModelAndView modelAndView = new ModelAndView("attendees/new_attendee_manually", "attendee", new Attendee());
-        modelAndView.addObject("upcoming_events", EventMap);
 
         return modelAndView;
     }

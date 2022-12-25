@@ -19,11 +19,10 @@ public class Parser {
     private static final String LOGIN_PASSWORD_XPATH = "//*[@id=\"session_password\"]";
     private static final String LOGIN_BUTTON_XPATH = "//button[@class=\"sign-in-form__submit-button\"]";
 
-    private static final String EVENT_USER_LIST_XPATH = "//*[@id=\"events-top-card\"]/div[1]/div[2]/div/div[1]/div[1]/div[4]/div";
+    private static final String EVENT_ATTENDEE_LIST_XPATH = "//*[@id=\"events-top-card\"]/div[1]/div[2]/div/div[1]/div[1]/div[5]/div";
     private static final String EVENT_ATTENDEES_CLASSNAME = "reusable-search__result-container";
     private static final String EVENT_ATTENDEE_CLASSNAME = "app-aware-link";
 
- // IDs for the next two elements generates automatically, so it is not possible to use related XPATH
     private static final String ATTENDEE_POSITION_COMPANY_XPATH = "//*[@id=\"main\"]/section/div[2]/div[2]/div[1]/div[2]";
     private static final String ATTENDEE_LOCATION_XPATH = "//*[@id=\"main\"]/section/div[2]/div[2]/div[2]/span[1]";
 
@@ -63,7 +62,11 @@ public class Parser {
         for (String attendeeLink: attendeesLinks) {
             Attendee attendee = new Attendee();
 
-            httpPresent(attendeeLink, attendee);
+            if (httpPresent(attendeeLink)){
+                attendee.setLinkedInLink(attendeeLink);
+            } else{
+                attendee.setLinkedInLink("https//:"+attendeeLink);
+            }
 
             getAttendeeInfo(attendee);
 
@@ -102,11 +105,11 @@ public class Parser {
 
     private List<String> getEventAttendeesLinks(String event_page){
         driver.get(event_page);
-        sleep(3);
+        sleep(TIME_TO_SLEEP);
 
-        WebElement userListButton = driver.findElement(By.xpath(EVENT_USER_LIST_XPATH));
+        WebElement userListButton = driver.findElement(By.xpath(EVENT_ATTENDEE_LIST_XPATH));
         userListButton.click();
-        sleep(3);
+        sleep(TIME_TO_SLEEP);
 
         List<WebElement> attendees = driver.findElements(By.className(EVENT_ATTENDEES_CLASSNAME));
         List<String> newAttendees = new ArrayList<>();
@@ -128,7 +131,12 @@ public class Parser {
 
     private Attendee getGeneralInfo(Attendee attendee){
 
-        driver.get(attendee.getLinkedInLink());
+        if (httpPresent(attendee.getLinkedInLink())){
+            driver.get(attendee.getLinkedInLink());
+        } else{
+            driver.get("https//:" + attendee.getLinkedInLink());
+        }
+
         sleep(TIME_TO_SLEEP);
         String companyAndPosition = driver.findElement(By.xpath(ATTENDEE_POSITION_COMPANY_XPATH)).getText();
         System.out.println(companyAndPosition);
@@ -175,13 +183,8 @@ public class Parser {
         }
     }
 
-    private Attendee httpPresent(String link, Attendee attendee){
+    private boolean httpPresent(String link){
         String[] splittedLink = link.split("//");
-        boolean httpsPresent = splittedLink.length == 2;
-
-        if (httpsPresent){
-            attendee.setLinkedInLink(splittedLink[1]);
-        }
-        return attendee;
+        return splittedLink.length == 2;
     }
 }

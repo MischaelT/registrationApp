@@ -24,23 +24,20 @@ public class AccountController {
     @RequestMapping(value="/account", method = RequestMethod.GET)
     public ModelAndView showAccountPage(ModelMap model){
 
-        return new ModelAndView("account/sign_in");
+        Iterator<User> usersIterator = usersRepository.findAll().iterator();
+        User user = usersIterator.next();
+
+        return new ModelAndView("account/account", "user", user);
     }
 
-    @RequestMapping(value="/account/sign_in", method = RequestMethod.GET)
-    public ModelAndView showSignInPage(ModelMap model){
-
-        List<User> users =  (ArrayList<User>) usersRepository.findAll();
-        Map<String, Object> usersMap = new HashMap<>();
-        usersMap.put("users", users);
-
-        return new ModelAndView("account/sign_in", usersMap);
-
-    }
-
-    @RequestMapping(value="/account/change_data", method = RequestMethod.GET)
+    @RequestMapping(value="/account/settings", method = RequestMethod.GET)
     public ModelAndView changeAccountData(ModelMap model){
-        return new ModelAndView("account/change_account_data");
+        return new ModelAndView("account/change_account_info");
+    }
+
+    @RequestMapping(value="/account/settings", method = RequestMethod.POST)
+    public ModelAndView saveChangedData(ModelMap model){
+        return new ModelAndView("account/change_account_info");
     }
 
 }

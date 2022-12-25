@@ -1,4 +1,5 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <html>
     <head>
@@ -10,7 +11,7 @@
         <link rel="stylesheet" href="/css/styles.css"/>
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
-        <title>Welcome</title>
+        <title>New attendee</title>
     </head>
     <body class="sb-nav-fixed">
         <%@ include file="../includes/navbar.jsp"%>
@@ -24,10 +25,12 @@
                         <br>
                         <h1>Add new user</h1>
                         <br>
+
                         <form:form method="POST"
                           action="/events/upcoming/${id}/new_attendee/manually" modelAttribute="attendee">
                              <table>
                                 <p>
+
                                     <tr>
                                         <td><form:label path="name">Name   </form:label></td>
                                         <td><form:input path="name"/></td>
@@ -45,24 +48,28 @@
                                         <td><form:input path="facebookLink"/></td>
                                     </tr>
                                 </p>
-                                <p>
-                                    <tr>
-                                        <td>Event name   </td>
-                                        <td>
-                                            <div class="input-group mb-3">
-                                              <select class="custom-select" id="inputGroupSelect02">
-                                                <option selected>Choose...</option>
-                                                  <c:forEach var="event" items="${upcoming_events}">
-                                                        <option value="${event.getName()}">${event.getName()}</option>
-                                                  </c:forEach>
-                                              </select>
-                                              <div class="input-group-append">
-                                                <label class="input-group-text" for="inputGroupSelect02">Options</label>
-                                              </div>
-                                            </div>
-                                        <td>
-                                    </tr>
-                                </p>
+                              <c:choose>
+                                 <c:when test="${!fromEvent}">
+                                     <p>
+                                     <tr>
+                                         <td>Event name</td>
+                                         <td>
+                                             <div class="input-group mb-3">
+                                               <select class="custom-select" id="inputGroupSelect02">
+                                                 <option selected>Choose...</option>
+                                                   <c:forEach var="event" items="${upcoming_events}">
+                                                         <option value="${event.getName()}">${event.getName()}</option>
+                                                   </c:forEach>
+                                               </select>
+                                               <div class="input-group-append">
+                                                 <label class="input-group-text" for="inputGroupSelect02">Options</label>
+                                               </div>
+                                             </div>
+                                         <td>
+                                     </tr>
+                                 </p>
+                                 </c:when>
+                              </c:choose>
                                 <p>
                                     <tr>
                                         <td><input type="submit" value="Submit"></input></td>

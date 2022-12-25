@@ -5,15 +5,15 @@ import jakarta.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name="events")
+@Table(name="users")
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_generator")
     @SequenceGenerator(name = "users_generator", sequenceName = "users_seq", allocationSize = 1)
-    private long id;
+    private long user_id;
 
-    @Column(name = "name")
+    @Column(name = "user_name")
     private String name;
 
     @Column(name = "linked_login")

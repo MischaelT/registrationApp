@@ -3,10 +3,13 @@ package com.upscale.registration.controller;
 import com.upscale.registration.model.Event;
 import com.upscale.registration.forms.Form;
 import com.upscale.registration.model.Attendee;
+import com.upscale.registration.model.User;
 import com.upscale.registration.parser.Parser;
 import com.upscale.registration.repositories.EventsRepository;
 import com.upscale.registration.repositories.AttendeeRepository;
+import com.upscale.registration.repositories.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -14,11 +17,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 @Controller
 public class ParserController {
@@ -26,6 +29,8 @@ public class ParserController {
     private EventsRepository eventsRepository;
     @Autowired
     private AttendeeRepository attendeeRepository;
+    @Autowired
+    private UsersRepository userRepository;
 
     @RequestMapping(value="/events/upcoming/{id}/new_attendee/automatically", method = RequestMethod.GET)
     public ModelAndView showAddUserAutomaticallyForm(@PathVariable int id, @ModelAttribute("form_content") Form form,
@@ -37,7 +42,10 @@ public class ParserController {
     public RedirectView AddAttendeeAutomatically(@PathVariable int id, @ModelAttribute("form_content") Form form,
                                              BindingResult result, ModelMap model){
 
-        Parser parser = new Parser("m.kouzin@upscale-labs.com","VeryStrongPassword");
+        Iterator<User> usersIterator = userRepository.findAll().iterator();
+        User activeUser = usersIterator.next();
+        Parser parser = new Parser(activeUser.getLinkedInLink(), activeUser.getLinkedPassword());
+
         String linked_link = form.getContent();
         List<Attendee> parsedAttendees = parser.runEventParsing(linked_link);
 
@@ -66,14 +74,19 @@ public class ParserController {
 
         RedirectView view = null;
 
-        if (attendeeRepository.existsById(Long.valueOf(id))){
+        try{
             Attendee attendee = attendeeRepository.findById(id).get(0);
-            Parser parser = new Parser("m.kouzin@upscale-labs.com","VeryStrongPassword");
+
+            Iterator<User> usersIterator = userRepository.findAll().iterator();
+            User activeUser = usersIterator.next();
+            Parser parser = new Parser(activeUser.getLinkedInLink(), activeUser.getLinkedPassword());
+
             Attendee newAttendee = parser.getAttendeeInformation(attendee);
             attendeeRepository.save(newAttendee);
             view = new RedirectView("/attendees/attendee/{id}");
-        } else{
-            view = new RedirectView("error");
+        } catch (Exception exception){
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Foo Not Found", exception);
         }
         return view;
     }
