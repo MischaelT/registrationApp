@@ -60,9 +60,9 @@ public class EventsController {
 
     @RequestMapping(value="/events/new_event", method = RequestMethod.POST)
     public RedirectView submitForm(@ModelAttribute("event")Event event, BindingResult result, ModelMap model){
-
+        // TODO implement if an event have already in database
         LocalDateTime now = LocalDateTime.now();
-        String urlForRedirect = "";
+        String urlForRedirect;
 
         if (event.getDate().compareTo(convertToDateViaSqlTimestamp(now))==1){
             event.setIsPassed(false);
@@ -78,6 +78,7 @@ public class EventsController {
 
     @RequestMapping(value="/events/statistics", method = RequestMethod.GET)
     public String showStatisticsPage(ModelMap model){
+        // TODO Implement statistics
         return "statistics";
     }
 

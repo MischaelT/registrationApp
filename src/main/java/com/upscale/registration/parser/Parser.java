@@ -33,6 +33,8 @@ public class Parser {
 
     private static final String ATTENDEE_EMAIL_XPATH = "//*[@class=\"pv-contact-info__contact-type ci-email\"]/div";
 
+    private static final String ATTENDEE_EXPERIENCE_ID = "experience";
+
     private static final int TIME_TO_SLEEP = 3;
 
     private String linkedItnName;
@@ -65,14 +67,13 @@ public class Parser {
             if (httpPresent(attendeeLink)){
                 attendee.setLinkedInLink(attendeeLink);
             } else{
-                attendee.setLinkedInLink("https//:"+attendeeLink);
+                attendee.setLinkedInLink("https//:" + attendeeLink);
             }
 
             getAttendeeInfo(attendee);
 
             attendees.add(attendee);
         }
-
         driver.quit();
         return attendees;
     }
@@ -147,10 +148,14 @@ public class Parser {
         String currentLocation = driver.findElement(By.xpath(ATTENDEE_LOCATION_XPATH)).getText();
         System.out.println(currentLocation);
         sleep(TIME_TO_SLEEP);
+        String currentExperience = getExperience(driver.findElement(By.id(ATTENDEE_EXPERIENCE_ID)));
+        System.out.println(currentExperience);
+        sleep(TIME_TO_SLEEP);
 
         attendee.setCurrentPosition(companyAndPosition);
         attendee.setCurrentCompany(company);
         attendee.setLocation(currentLocation);
+        attendee.setExperience(currentExperience);
 
         return attendee;
     }
@@ -172,6 +177,17 @@ public class Parser {
         attendee.setName(name);
 
         return attendee;
+    }
+
+    // TODO Fix getExperience method
+    private String getExperience(WebElement experience){
+//        String RELATIVE_EXP_XPATH = "following-sibling::div[2]";
+//        String RELATIVE_EXP_XPATH = "following-sibling::div[2]/ul/li/div/div[1]/div[0]/div[0]/div";
+//        WebElement experienceElement = experience.findElement(By.xpath("RELATIVE_EXP_XPATH"));
+//        String firstRow = experienceElement.findElement(By.xpath("div/span/span")).getText();
+//        String secondRow = experienceElement.findElement(By.xpath("span/span")).getText();
+        return experience.getText();
+
     }
 
 

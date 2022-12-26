@@ -28,6 +28,8 @@ public class Attendee {
     @Column(name = "location")
     private String location;
 
+    @Column(name = "experience")
+    private String experience;
     @ManyToMany(fetch = FetchType.LAZY,
             cascade = {
                     CascadeType.PERSIST,
@@ -121,6 +123,14 @@ public class Attendee {
 
     public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
+    }
+
+    public String getExperience() {
+        return experience;
+    }
+
+    public void setExperience(String experience) {
+        this.experience = experience;
     }
 }
 

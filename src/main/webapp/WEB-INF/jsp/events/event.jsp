@@ -21,15 +21,14 @@
                                 <br>
                                 <br>
                                 <br>
-                                <h1>Event ${event.getName()}</h1>
+                                <h1> ${event.getName()} event</h1>
+                                <br>
                                   <c:choose>
                                      <c:when test="${!(event.getIsPassed())}">
                                          <p><a href="/events/upcoming/${id}/change_data"><button type="button">Change name/status</button></a></p>
                                      </c:when>
                                   </c:choose>
                                 <br>
-                                <br>
-                                <h2>List of attendees</h2>
                                 <c:choose>
                                     <c:when test="${event.getAttendees().isEmpty()}">
                                         <p>Seems there is no attendees</p>

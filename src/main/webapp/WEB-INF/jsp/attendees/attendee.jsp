@@ -27,13 +27,12 @@
                         <br>
                         <table>
 
-                              <colgroup>
-                                <col span="3" >
-                              </colgroup>
-
+                          <colgroup>
+                            <col span="3" >
+                          </colgroup>
                             <tr>
                                 <td style="width:20%"> <b>LinkedIn:</b><td>
-                                <td style="width:40%">${attendee.getLinkedInLink()}</td>
+                                <td style="width:40%"><a href="${attendee.getLinkedInLink()}">@linked</a></td>
                                 <td style="width:20%" rowspan="6"><p><a href="/attendees/attendee/${id}/update"><button type="button">Change data</button></a></p></td>
                             </tr>
                             <tr>
@@ -55,6 +54,10 @@
                             <tr>
                                 <td><b>Location:</b><td>
                                 <td>${attendee.getLocation()}</td>
+                            </tr>
+                            <tr>
+                                <td><b>Experience:</b><td>
+                                <td>${attendee.getExperience()}</td>
                             </tr>
                         </table>
                         <br>

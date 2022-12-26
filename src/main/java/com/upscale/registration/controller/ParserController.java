@@ -32,13 +32,13 @@ public class ParserController {
     @Autowired
     private UsersRepository userRepository;
 
-    @RequestMapping(value="/events/upcoming/{id}/new_attendee/automatically", method = RequestMethod.GET)
+    @RequestMapping(value="/events/upcoming/{id}/update/automatically", method = RequestMethod.GET)
     public ModelAndView showAddUserAutomaticallyForm(@PathVariable int id, @ModelAttribute("form_content") Form form,
                                                      BindingResult result, ModelMap model){
         return new ModelAndView("attendees/new_attendee_automatically", "form_content", new Form());
     }
 
-    @RequestMapping(value="/events/upcoming/{id}/new_attendee/automatically", method = RequestMethod.POST)
+    @RequestMapping(value="/events/upcoming/{id}/update/automatically", method = RequestMethod.POST)
     public RedirectView AddAttendeeAutomatically(@PathVariable int id, @ModelAttribute("form_content") Form form,
                                              BindingResult result, ModelMap model){
 
@@ -69,25 +69,35 @@ public class ParserController {
         return new RedirectView("/events/upcoming/{id}");
     }
 
-    @RequestMapping(value="/attendees/attendee/{id}/change_info/automatically", method = RequestMethod.POST)
+    @RequestMapping(value="/attendees/attendee/{id}/update/automatically", method = RequestMethod.POST)
     public RedirectView collectAttendeeInfoAutomatically(@PathVariable long id, ModelMap model){
 
         RedirectView view = null;
+        Attendee attendee;
 
         try{
-            Attendee attendee = attendeeRepository.findById(id).get(0);
-
-            Iterator<User> usersIterator = userRepository.findAll().iterator();
-            User activeUser = usersIterator.next();
-            Parser parser = new Parser(activeUser.getLinkedInLink(), activeUser.getLinkedPassword());
-
-            Attendee newAttendee = parser.getAttendeeInformation(attendee);
-            attendeeRepository.save(newAttendee);
-            view = new RedirectView("/attendees/attendee/{id}");
+            attendee = attendeeRepository.findById(id).get(0);
         } catch (Exception exception){
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Foo Not Found", exception);
         }
+
+        Iterator<User> usersIterator = userRepository.findAll().iterator();
+        User activeUser = usersIterator.next();
+        Parser parser = new Parser(activeUser.getLinkedInLink(), activeUser.getLinkedPassword());
+
+        Attendee newAttendee;
+
+        try {
+            newAttendee = parser.getAttendeeInformation(attendee);
+        }catch (Exception exception){
+            throw new ResponseStatusException(
+                    HttpStatus.REQUEST_TIMEOUT, "Something went wrong during parsing. Try again", exception);
+        }
+
+        attendeeRepository.save(newAttendee);
+        view = new RedirectView("/attendees/attendee/{id}");
+
         return view;
     }
 

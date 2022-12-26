@@ -32,14 +32,18 @@ public class AttendeeController {
     public ModelAndView showAttendee(@PathVariable long id, ModelMap model){
 
         ModelAndView view = null;
+        Attendee attendee;
 
         try{
-            Attendee attendee =  attendeeRepository.findById(id).get(0);
-            view = new ModelAndView("attendees/attendee","attendee", attendee );
+            attendee =  attendeeRepository.findById(id).get(0);
         } catch (Exception exception){
             throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Foo Not Found", exception);
+                    HttpStatus.NOT_FOUND, "Such Attendee Not Found", exception);
         }
+
+        view = new ModelAndView("attendees/attendee","attendee", attendee );
+        System.out.println(attendee.getEvents());
+
         return view;
     }
 
@@ -54,8 +58,9 @@ public class AttendeeController {
             view = new ModelAndView("attendees/attendee","attendee", attendee );
         } catch (Exception exception){
             throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Foo Not Found", exception);
+                    HttpStatus.NOT_FOUND, "Such Attendee Not Found", exception);
         }
+
         return view;
     }
 
@@ -69,7 +74,7 @@ public class AttendeeController {
             view = new ModelAndView("attendees/update_attendee", "attendee", attendee);
         } catch (Exception exception){
             throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Foo Not Found", exception);
+                    HttpStatus.NOT_FOUND, "Such Attendee Not Found", exception);
         }
         return view;
     }
@@ -77,14 +82,13 @@ public class AttendeeController {
     @RequestMapping(value="/attendees/attendee/{id}/update", method = RequestMethod.POST)
     public RedirectView ChangeAttendeeInfo(@PathVariable long id, @ModelAttribute("attendee")Attendee attendee,
                                            BindingResult result, ModelMap model){
-
         RedirectView view = null;
         Attendee attendeeDb;
         try {
             attendeeDb = attendeeRepository.findById(id).get(0);
         } catch (Exception exception){
             throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Foo Not Found", exception);
+                    HttpStatus.NOT_FOUND, "Such Attendee Not Found", exception);
         }
             attendeeDb.setName(attendee.getName());
             attendeeDb.setLinkedInLink(attendee.getLinkedInLink());

@@ -37,6 +37,7 @@ public class AccountController {
 
     @RequestMapping(value="/account/settings", method = RequestMethod.POST)
     public ModelAndView saveChangedData(ModelMap model){
+        // TODO implement the changing of account info
         return new ModelAndView("account/change_account_info");
     }
 

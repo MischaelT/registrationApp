@@ -22,7 +22,6 @@
                         <br>
                         <br>
                         <br>
-                        <h1>List of attendee from database</h1>
                         <br>
                         <p><input type="text" placeholder="Search by attendee..."> <button type="button">submit</button></p>
                         <br>

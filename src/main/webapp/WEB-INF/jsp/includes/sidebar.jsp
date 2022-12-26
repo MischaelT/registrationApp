@@ -43,7 +43,7 @@
                         <div class="collapse" id="pagesCollapseError" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordionPages">
                             <nav class="sb-sidenav-menu-nested nav">
                                 <a class="nav-link" href="/events/passed">List</a>
-                                <a class="nav-link" href="/events/passed">Statistics</a>
+                                <a class="nav-link" href="/events/statistics">Statistics</a>
                             </nav>
                         </div>
                     </nav>

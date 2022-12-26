@@ -27,7 +27,7 @@
                         <br>
 
                         <form:form method="POST"
-                          action="/events/upcoming/${id}/new_attendee/manually" modelAttribute="attendee">
+                          action="${postLink}" modelAttribute="attendee">
                              <table>
                                 <p>
 
@@ -48,24 +48,22 @@
                                         <td><form:input path="facebookLink"/></td>
                                     </tr>
                                 </p>
+
                               <c:choose>
                                  <c:when test="${!fromEvent}">
                                      <p>
                                      <tr>
-                                         <td>Event name</td>
+                                         <td><form:label path="events">Event name</form:label></td>
                                          <td>
                                              <div class="input-group mb-3">
-                                               <select class="custom-select" id="inputGroupSelect02">
+                                               <form:select path="events" name="selected_event" class="custom-select" id="inputGroupSelect02">
                                                  <option selected>Choose...</option>
                                                    <c:forEach var="event" items="${upcoming_events}">
-                                                         <option value="${event.getName()}">${event.getName()}</option>
+                                                         <form:option value="${event.getId()}">${event.getName()}</form:option>
                                                    </c:forEach>
-                                               </select>
-                                               <div class="input-group-append">
-                                                 <label class="input-group-text" for="inputGroupSelect02">Options</label>
-                                               </div>
+                                               </form:select>
                                              </div>
-                                         <td>
+                                         </td>
                                      </tr>
                                  </p>
                                  </c:when>
@@ -77,15 +75,18 @@
                                 </p>
                             </table>
                         </form:form>
-
-                        <form:form method="POST" action="" modelAttribute="form_content">
-                          <p> Would you like to collect some information automatically? </p>
-                              <table>
-                                 <tr>
-                                    <td><input type="submit" value="Lets do it!"/></td>
-                                 </tr>
-                                </table>
-                        </form:form>
+                          <c:choose>
+                             <c:when test="${false}">
+                                <form:form method="POST" action="" modelAttribute="form_content">
+                                  <p> Would you like to collect some information automatically? </p>
+                                      <table>
+                                         <tr>
+                                            <td><input type="submit" value="Lets do it!"/></td>
+                                         </tr>
+                                        </table>
+                                </form:form>
+                               </c:when>
+                            </c:choose>
                     <div>
                 </main>
                 <%@ include file="../includes/footer.jsp"%>

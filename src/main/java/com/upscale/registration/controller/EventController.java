@@ -32,10 +32,10 @@ public class EventController {
         ModelAndView view ;
         try {
             Event event =  eventsRepository.findById(id).get(0);
-             view = new ModelAndView("events/event", "event", event);
+            view = new ModelAndView("events/event", "event", event);
         } catch (Exception exception){
             throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Foo Not Found", exception);
+                    HttpStatus.NOT_FOUND, "Such Event Not Found", exception);
         }
         return view;
     }
@@ -48,7 +48,7 @@ public class EventController {
             view = new ModelAndView("events/event", "event", event);
         } catch (Exception exception){
             throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Foo Not Found", exception);
+                    HttpStatus.NOT_FOUND, "Such Event Not Found", exception);
         }
         return view;
     }
@@ -56,6 +56,7 @@ public class EventController {
     @RequestMapping(value="/events/upcoming/{id}/new_attendee/manually", method = RequestMethod.GET)
     public ModelAndView showAddAttendeeManuallyForm(@PathVariable int id, ModelMap model){
         model.addAttribute("fromEvent", true);
+        model.addAttribute("postLink", "/events/upcoming/"+id+"/new_attendee/manually");
         return new ModelAndView("attendees/new_attendee_manually", "attendee", new Attendee());
     }
 
@@ -65,7 +66,7 @@ public class EventController {
         String link = attendee.getLinkedInLink();
 
         RedirectView view = null;
-
+        // TODO Check if attende have already been in database
         boolean attendeeNotInDatabase = attendeeRepository.findByNameAndLinkedInLink(attendee.getName(), attendee.getLinkedInLink()).isEmpty();
 
         Event event;
@@ -75,7 +76,7 @@ public class EventController {
             event = events.get(0);
         } catch (Exception exception){
             throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Foo Not Found", exception);
+                    HttpStatus.NOT_FOUND, "Such Event Not Found", exception);
         }
 
         Set<Attendee> attendeeList = event.getAttendees();
@@ -96,7 +97,7 @@ public class EventController {
             event =  eventsRepository.findById(id).get(0);
         } catch (Exception exception){
             throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Foo Not Found", exception);
+                    HttpStatus.NOT_FOUND, "Such Event Not Found", exception);
         }
             view = new ModelAndView("events/change_event_info", "event", event);
         return view;
@@ -111,7 +112,7 @@ public class EventController {
             eventDb = eventsRepository.findById(id).get(0);
         } catch (Exception exception){
             throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Foo Not Found", exception);
+                    HttpStatus.NOT_FOUND, "Such Event Not Found", exception);
         }
 
 
