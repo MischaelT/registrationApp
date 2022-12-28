@@ -30,59 +30,50 @@ public class AttendeeController {
 
     @RequestMapping(value="/attendees/attendee/{id}", method = RequestMethod.GET)
     public ModelAndView showAttendee(@PathVariable long id, ModelMap model){
-
-        ModelAndView view = null;
         Attendee attendee;
-
         try{
             attendee =  attendeeRepository.findById(id).get(0);
         } catch (Exception exception){
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Such Attendee Not Found", exception);
         }
+        String[] splittedExperience = attendee.getExperience().split("__");
+        model.addAttribute("experience",splittedExperience);
 
-        view = new ModelAndView("attendees/attendee","attendee", attendee );
-        System.out.println(attendee.getEvents());
-
+        ModelAndView view = new ModelAndView("attendees/attendee","attendee", attendee);
         return view;
     }
 
     @RequestMapping(value="/attendees/attendee/{id}", method = RequestMethod.POST)
     public ModelAndView updateAttendee(@PathVariable long id, ModelMap model){
-
-        ModelAndView view = null;
         Attendee attendee;
-
         try {
             attendee =  attendeeRepository.findById(id).get(0);
-            view = new ModelAndView("attendees/attendee","attendee", attendee );
         } catch (Exception exception){
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Such Attendee Not Found", exception);
         }
-
+        ModelAndView view = new ModelAndView("attendees/attendee","attendee", attendee );
         return view;
     }
 
     @RequestMapping(value="/attendees/attendee/{id}/update", method = RequestMethod.GET)
     public ModelAndView showAttendeeChangeInfoPage(@PathVariable long id, ModelMap model){
-
-        ModelAndView view = null;
-
+        Attendee attendee;
         try {
-            Attendee attendee =  attendeeRepository.findById(id).get(0);
-            view = new ModelAndView("attendees/update_attendee", "attendee", attendee);
+            attendee =  attendeeRepository.findById(id).get(0);
         } catch (Exception exception){
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Such Attendee Not Found", exception);
         }
+        ModelAndView view = new ModelAndView("attendees/update_attendee",
+                                             "attendee", attendee);
         return view;
     }
 
     @RequestMapping(value="/attendees/attendee/{id}/update", method = RequestMethod.POST)
     public RedirectView ChangeAttendeeInfo(@PathVariable long id, @ModelAttribute("attendee")Attendee attendee,
                                            BindingResult result, ModelMap model){
-        RedirectView view = null;
         Attendee attendeeDb;
         try {
             attendeeDb = attendeeRepository.findById(id).get(0);
@@ -90,16 +81,12 @@ public class AttendeeController {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Such Attendee Not Found", exception);
         }
-            attendeeDb.setName(attendee.getName());
-            attendeeDb.setLinkedInLink(attendee.getLinkedInLink());
-            attendeeRepository.save(attendeeDb);
-            view = new RedirectView("/attendees/attendee/{id}");
-
+        attendeeDb.setName(attendee.getName());
+        attendeeDb.setLinkedInLink(attendee.getLinkedInLink());
+        attendeeRepository.save(attendeeDb);
+        RedirectView view = new RedirectView("/attendees/attendee/{id}");
         return view;
     }
-
-
-
 }
 
 

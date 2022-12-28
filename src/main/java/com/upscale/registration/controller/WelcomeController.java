@@ -5,10 +5,6 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-// TODO implement super account
-// TODO Implement error handling
-// TODO  Implement statistics
-// TODO  Implement updating user and event data
 // TODO Implement checkboxes
 
 @Controller

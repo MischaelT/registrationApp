@@ -29,69 +29,19 @@ public class EventController {
 
     @RequestMapping(value="/events/upcoming/{id}", method = RequestMethod.GET)
     public ModelAndView showUpcomingEvent(@PathVariable int id, ModelMap model){
-        ModelAndView view ;
+        Event event;
         try {
-            Event event =  eventsRepository.findById(id).get(0);
-            view = new ModelAndView("events/event", "event", event);
+            event =  eventsRepository.findById(id).get(0);
         } catch (Exception exception){
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Such Event Not Found", exception);
         }
+        ModelAndView view = new ModelAndView("events/event", "event", event);
         return view;
     }
 
     @RequestMapping(value="/events/passed/{id}", method = RequestMethod.GET)
     public ModelAndView showPassedEvent(@PathVariable long id, ModelMap model) {
-        ModelAndView view = null;
-        try{
-            Event event =  eventsRepository.findById(id).get(0);
-            view = new ModelAndView("events/event", "event", event);
-        } catch (Exception exception){
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Such Event Not Found", exception);
-        }
-        return view;
-    }
-
-    @RequestMapping(value="/events/upcoming/{id}/new_attendee/manually", method = RequestMethod.GET)
-    public ModelAndView showAddAttendeeManuallyForm(@PathVariable int id, ModelMap model){
-        model.addAttribute("fromEvent", true);
-        model.addAttribute("postLink", "/events/upcoming/"+id+"/new_attendee/manually");
-        return new ModelAndView("attendees/new_attendee_manually", "attendee", new Attendee());
-    }
-
-    @RequestMapping(value="/events/upcoming/{id}/new_attendee/manually", method = RequestMethod.POST)
-    public RedirectView addAttendeeManually(@PathVariable int id, @ModelAttribute("attendee") Attendee attendee, BindingResult result, ModelMap model){
-
-        String link = attendee.getLinkedInLink();
-
-        RedirectView view = null;
-        // TODO Check if attende have already been in database
-        boolean attendeeNotInDatabase = attendeeRepository.findByNameAndLinkedInLink(attendee.getName(), attendee.getLinkedInLink()).isEmpty();
-
-        Event event;
-
-        try{
-            List<Event> events = eventsRepository.findById(id);
-            event = events.get(0);
-        } catch (Exception exception){
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Such Event Not Found", exception);
-        }
-
-        Set<Attendee> attendeeList = event.getAttendees();
-        attendeeList.add(attendee);
-        event.setAttendees(attendeeList);
-        eventsRepository.save(event);
-        view = new RedirectView("/events/upcoming/{id}");
-
-        return view;
-    }
-
-    @RequestMapping(value="/events/upcoming/{id}/change_data", method = RequestMethod.GET)
-    public ModelAndView showChangeDataUpcomingPage(@PathVariable int id, ModelMap model){
-
-        ModelAndView view;
         Event event;
         try{
             event =  eventsRepository.findById(id).get(0);
@@ -99,14 +49,68 @@ public class EventController {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Such Event Not Found", exception);
         }
-            view = new ModelAndView("events/change_event_info", "event", event);
+        ModelAndView view = new ModelAndView("events/event", "event", event);
+        return view;
+    }
+
+    @RequestMapping(value="/events/upcoming/{id}/new_attendee/manually", method = RequestMethod.GET)
+    public ModelAndView showAddAttendeeManuallyForm(@PathVariable int id, ModelMap model){
+        //since we use the same template new_attendee_manually.jsp in two different methods we pass
+        // this two variables to generate info in jsp in accordance with the method we are generating jsp from
+        model.addAttribute("fromEvent", true);
+        model.addAttribute("postLink", "/events/upcoming/"+id+"/new_attendee/manually");
+        return new ModelAndView("attendees/new_attendee_manually",
+                                "attendee", new Attendee());
+
+    }
+
+    @RequestMapping(value="/events/upcoming/{id}/new_attendee/manually", method = RequestMethod.POST)
+    public RedirectView addAttendeeManually(@PathVariable int id, @ModelAttribute("attendee") Attendee newAttendee,
+                                            BindingResult result, ModelMap model){
+
+        Event event;
+        try{
+            List<Event> events = eventsRepository.findById(id);
+            event = events.get(0);
+        } catch (Exception exception){
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Such Event Not Found", exception);
+        }
+        Set<Attendee> attendeeList = event.getAttendees();
+        boolean attendeeNotInDatabase = attendeeRepository.findByNameAndLinkedInLink(
+                                        newAttendee.getName(), newAttendee.getLinkedInLink()).isEmpty();
+
+        if (attendeeNotInDatabase){
+            attendeeList.add(newAttendee);
+        }else{
+            Attendee attendeeDB = attendeeRepository.findByNameAndLinkedInLink(
+                                  newAttendee.getName(), newAttendee.getLinkedInLink()).get(0);
+            attendeeList.add(attendeeDB);
+        }
+
+        event.setAttendees(attendeeList);
+        eventsRepository.save(event);
+
+        RedirectView view = new RedirectView("/events/upcoming/{id}");
+        return view;
+    }
+
+    @RequestMapping(value="/events/upcoming/{id}/change_data", method = RequestMethod.GET)
+    public ModelAndView showChangeDataUpcomingPage(@PathVariable int id, ModelMap model){
+        Event event;
+        try{
+            event =  eventsRepository.findById(id).get(0);
+        } catch (Exception exception){
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Such Event Not Found", exception);
+        }
+        ModelAndView view = new ModelAndView("events/change_event_info", "event", event);
         return view;
     }
 
     @RequestMapping(value="/events/upcoming/{id}/change_data", method = RequestMethod.POST)
     public RedirectView changeDataUpcomingEvent(@PathVariable int id, @ModelAttribute("event")Event event,
                                                 BindingResult result, ModelMap model){
-        RedirectView view;
         Event eventDb;
         try {
             eventDb = eventsRepository.findById(id).get(0);
@@ -114,16 +118,13 @@ public class EventController {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Such Event Not Found", exception);
         }
-
-
         eventDb.setIsPassed(event.getIsPassed());
         eventDb.setDate(event.getDate());
         eventDb.setLinkedInLink(event.getLinkedInLink());
         eventDb.setName(event.getName());
         eventsRepository.save(eventDb);
-        view = new RedirectView("/events/upcoming/{id}");
 
+        RedirectView view = new RedirectView("/events/upcoming/{id}");
         return view;
     }
-
 }

@@ -55,14 +55,17 @@
                                 <td><b>Location:</b><td>
                                 <td>${attendee.getLocation()}</td>
                             </tr>
-                            <tr>
-                                <td><b>Experience:</b><td>
-                                <td>${attendee.getExperience()}</td>
-                            </tr>
                         </table>
                         <br>
                         <br>
-                        <p>${attendee.getName()} attended such events:</p>
+                        <div align="center" style="white-space: pre-line">
+                            <h3>Experience:</h3>
+                             <c:forEach var="exper" items="${experience}">
+                                   ${exper}
+                             </c:forEach>
+                        </div>
+                        <br>
+                        <h3>${attendee.getName()} attended such events:</h3>
                         <table>
                           <c:forEach var="event" items="${attendee.getEvents()}">
                               <tr>

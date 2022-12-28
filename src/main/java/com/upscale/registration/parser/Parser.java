@@ -9,7 +9,9 @@ import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.util.ArrayList;
 
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 
@@ -33,7 +35,7 @@ public class Parser {
 
     private static final String ATTENDEE_EMAIL_XPATH = "//*[@class=\"pv-contact-info__contact-type ci-email\"]/div";
 
-    private static final String ATTENDEE_EXPERIENCE_ID = "experience";
+    private static final String ATTENDEE_EXPERIENCE_ID = "//*[@id=\"experience\"]";
 
     private static final int TIME_TO_SLEEP = 3;
 
@@ -69,9 +71,7 @@ public class Parser {
             } else{
                 attendee.setLinkedInLink("https//:" + attendeeLink);
             }
-
             getAttendeeInfo(attendee);
-
             attendees.add(attendee);
         }
         driver.quit();
@@ -80,7 +80,7 @@ public class Parser {
 
     public Attendee getAttendeeInformation(Attendee attendee){
         login(basePage);
-        sleep(TIME_TO_SLEEP);
+        sleep();
         Attendee updatedAttendee = getAttendeeInfo(attendee);
         driver.quit();
         return updatedAttendee;
@@ -89,28 +89,26 @@ public class Parser {
     private void login(String loginPage) {
 
         driver.get(loginPage);
-        sleep(TIME_TO_SLEEP);
-
+        sleep();
         WebElement userName = driver.findElement(By.xpath(LOGIN_USERNAME_XPATH));
-        sleep(TIME_TO_SLEEP);
+        sleep();
         WebElement password = driver.findElement(By.xpath(LOGIN_PASSWORD_XPATH));
 
         userName.sendKeys(linkedItnName);
         password.sendKeys(linkedInPassword);
 
         WebElement login_button = driver.findElement(By.xpath(LOGIN_BUTTON_XPATH));
-
-        sleep(TIME_TO_SLEEP);
+        sleep();
         login_button.click();
     }
 
     private List<String> getEventAttendeesLinks(String event_page){
         driver.get(event_page);
-        sleep(TIME_TO_SLEEP);
-
+        sleep();
         WebElement userListButton = driver.findElement(By.xpath(EVENT_ATTENDEE_LIST_XPATH));
+        sleep();
         userListButton.click();
-        sleep(TIME_TO_SLEEP);
+        sleep();
 
         List<WebElement> attendees = driver.findElements(By.className(EVENT_ATTENDEES_CLASSNAME));
         List<String> newAttendees = new ArrayList<>();
@@ -123,14 +121,15 @@ public class Parser {
     }
 
     private Attendee getAttendeeInfo(Attendee attendee){
-
         getGeneralInfo(attendee);
         getContactInfo(attendee);
-
         return attendee;
     }
 
     private Attendee getGeneralInfo(Attendee attendee){
+
+        //Sometimes in the links that came to this method "https//:" can be apsant,
+        // that why we should check if it is present, because Selenium can only work with links where it is present
 
         if (httpPresent(attendee.getLinkedInLink())){
             driver.get(attendee.getLinkedInLink());
@@ -138,35 +137,31 @@ public class Parser {
             driver.get("https//:" + attendee.getLinkedInLink());
         }
 
-        sleep(TIME_TO_SLEEP);
+        sleep();
         String companyAndPosition = driver.findElement(By.xpath(ATTENDEE_POSITION_COMPANY_XPATH)).getText();
-        System.out.println(companyAndPosition);
-        sleep(TIME_TO_SLEEP);
+        sleep();
         String company = driver.findElement(By.xpath(ATTENDEE_COMPANY_XPATH)).getText();
-        System.out.println(company);
-        sleep(TIME_TO_SLEEP);
+        sleep();
         String currentLocation = driver.findElement(By.xpath(ATTENDEE_LOCATION_XPATH)).getText();
-        System.out.println(currentLocation);
-        sleep(TIME_TO_SLEEP);
-        String currentExperience = getExperience(driver.findElement(By.id(ATTENDEE_EXPERIENCE_ID)));
-        System.out.println(currentExperience);
-        sleep(TIME_TO_SLEEP);
+        sleep();
+        String currentExperience = getExperience(driver.findElement(By.xpath(ATTENDEE_EXPERIENCE_ID)));
+        sleep();
 
         attendee.setCurrentPosition(companyAndPosition);
         attendee.setCurrentCompany(company);
         attendee.setLocation(currentLocation);
-        attendee.setExperience(currentExperience);
 
+        attendee.setExperience(currentExperience);
         return attendee;
     }
 
     private Attendee getContactInfo(Attendee attendee){
         WebElement contactInfoLink = driver.findElement(By.id(ATTENDEE_CONTACT_INFO_ID));
-        sleep(TIME_TO_SLEEP);
+        sleep();
         contactInfoLink.click();
-        sleep(TIME_TO_SLEEP);
+        sleep();
         String name = driver.findElement(By.id(ATTENDEE_NAME_ID)).getText();
-        sleep(TIME_TO_SLEEP);
+        sleep();
         String emailAddress = "";
         try {
             emailAddress = driver.findElement(By.xpath(ATTENDEE_EMAIL_XPATH)).getText();
@@ -175,32 +170,71 @@ public class Parser {
         }
         attendee.setEmailAddress(emailAddress);
         attendee.setName(name);
-
         return attendee;
     }
 
     // TODO Fix getExperience method
     private String getExperience(WebElement experience){
-//        String RELATIVE_EXP_XPATH = "following-sibling::div[2]";
-//        String RELATIVE_EXP_XPATH = "following-sibling::div[2]/ul/li/div/div[1]/div[0]/div[0]/div";
-//        WebElement experienceElement = experience.findElement(By.xpath("RELATIVE_EXP_XPATH"));
-//        String firstRow = experienceElement.findElement(By.xpath("div/span/span")).getText();
-//        String secondRow = experienceElement.findElement(By.xpath("span/span")).getText();
-        return experience.getText();
 
+        String RELATIVE_EXP_XPATH = "following-sibling::div[2]";
+
+        WebElement experienceBlock = experience.findElement(By.xpath(RELATIVE_EXP_XPATH));
+        WebElement experiencesList = experienceBlock.findElement(By.xpath("ul"));
+
+        boolean hasNextElement = true;
+        int i = 1;
+        String experiencesString = "";
+        while (hasNextElement){
+            try{
+                WebElement experiencesListElement = experiencesList.findElement(
+                        By.xpath("li["+i+"]/div/div[2]"));
+                String experienceString = processExperienceInfo(experiencesListElement);
+                experiencesString+=experienceString+"__";
+                i++;
+            } catch (Exception exc){
+                hasNextElement=false;
+            }
+        }
+        return experiencesString;
     }
 
+    private String processExperienceInfo(WebElement experiencesListElement){
+        WebElement mainInfo = experiencesListElement.findElement(By.xpath("div[1]/div"));
+        String[] splittedMainInfo = mainInfo.getText().split("\n");
+        String mainInfoString = removeDuplicates(splittedMainInfo);
 
-    private void sleep(int seconds){
-        try {
-            TimeUnit.SECONDS.sleep(seconds);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+        WebElement skillInfo = experiencesListElement.findElement(By.xpath("div[2]"));
+        String[] splittedSkillInfo = skillInfo.getText().split("\n");
+        String skillInfoString = removeDuplicates(splittedSkillInfo);
+
+        return mainInfoString+"\n"+skillInfoString;
+    }
+
+    private String removeDuplicates(String[] arrayWithDuplicates) {
+        LinkedHashSet<String> set = new LinkedHashSet<String>();
+        for (int i = 0; i < arrayWithDuplicates.length; i++)
+            set.add(arrayWithDuplicates[i]);
+        String result = "";
+        for (String element:set) {
+            result+="\n"+element;
         }
+        return result;
     }
 
     private boolean httpPresent(String link){
         String[] splittedLink = link.split("//");
         return splittedLink.length == 2;
+    }
+
+    private void sleep(){
+        try {
+            TimeUnit.SECONDS.sleep(generateTimeToSleep());
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private int generateTimeToSleep(){
+        return TIME_TO_SLEEP+ThreadLocalRandom.current().nextInt(1, 3);
     }
 }

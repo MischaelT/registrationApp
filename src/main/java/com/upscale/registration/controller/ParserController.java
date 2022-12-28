@@ -35,13 +35,15 @@ public class ParserController {
     @RequestMapping(value="/events/upcoming/{id}/update/automatically", method = RequestMethod.GET)
     public ModelAndView showAddUserAutomaticallyForm(@PathVariable int id, @ModelAttribute("form_content") Form form,
                                                      BindingResult result, ModelMap model){
-        return new ModelAndView("attendees/new_attendee_automatically", "form_content", new Form());
+        return new ModelAndView("attendees/new_attendee_automatically",
+                                "form_content", new Form());
     }
 
     @RequestMapping(value="/events/upcoming/{id}/update/automatically", method = RequestMethod.POST)
     public RedirectView AddAttendeeAutomatically(@PathVariable int id, @ModelAttribute("form_content") Form form,
-                                             BindingResult result, ModelMap model){
+                                                 BindingResult result, ModelMap model){
 
+        // Since we have only one user in database, we can just got the first one from iterator
         Iterator<User> usersIterator = userRepository.findAll().iterator();
         User activeUser = usersIterator.next();
         Parser parser = new Parser(activeUser.getLinkedInLink(), activeUser.getLinkedPassword());
@@ -81,7 +83,7 @@ public class ParserController {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Foo Not Found", exception);
         }
-
+        // Since we have only one user in database, we can just got the first one from iterator
         Iterator<User> usersIterator = userRepository.findAll().iterator();
         User activeUser = usersIterator.next();
         Parser parser = new Parser(activeUser.getLinkedInLink(), activeUser.getLinkedPassword());
@@ -94,14 +96,13 @@ public class ParserController {
             throw new ResponseStatusException(
                     HttpStatus.REQUEST_TIMEOUT, "Something went wrong during parsing. Try again", exception);
         }
-
         attendeeRepository.save(newAttendee);
         view = new RedirectView("/attendees/attendee/{id}");
-
         return view;
     }
 
     private Attendee httpPresent(String link, Attendee attendee){
+        // Improve method
         String[] splittedLink = link.split("//");
         boolean httpsPresent = splittedLink.length == 2;
 

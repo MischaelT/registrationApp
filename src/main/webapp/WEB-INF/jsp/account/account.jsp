@@ -27,9 +27,24 @@
                             <h1>Account page</h1>
                             <br>
                             <table>
-                                <tr><td>Name: ${user.getName()}</td> </tr>
-                                <tr><td>LinkedIn email: ${user.getLinkedInLink()}</td><td><button type="button">Change data</button></td></tr>
-                                <tr><td>LinkedIn Password:  ${user.getLinkedPassword()}</td></tr>
+                                <tr>
+                                    <td>
+                                        Name: ${user.getName()}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        LinkedIn email: ${user.getLinkedInLink()}
+                                    </td>
+                                    <td>
+                                        <a href="/account/settings"><button type="button"> Change data </button></a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        LinkedIn Password:  ${user.getLinkedPassword()}
+                                    </td>
+                                </tr>
                             </table>
                             <br>
                             <br>

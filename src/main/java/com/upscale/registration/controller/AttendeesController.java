@@ -1,6 +1,5 @@
 package com.upscale.registration.controller;
 
-import com.upscale.registration.forms.Form;
 import com.upscale.registration.model.Event;
 import com.upscale.registration.model.Attendee;
 import com.upscale.registration.repositories.EventsRepository;
@@ -43,25 +42,24 @@ public class AttendeesController {
 
     @RequestMapping(value="/attendees/new_attendee/manually", method = RequestMethod.GET)
     public ModelAndView showAddAttendeePage(Model model){
-        Map<String, Object> eventMap = new HashMap<>();
 
         List<Event> events = eventsRepository.findByIsPassed(false);
 
         model.addAttribute("upcoming_events", events);
+        //since we use the same template new_attendee_manually.jsp in two different methods we pass
+        // this two variables to generate info in jsp in accordance with the method we are generating jsp from
         model.addAttribute("fromEvent", false);
         model.addAttribute("postLink", "/attendees/new_attendee/manually");
 
-        ModelAndView modelAndView = new ModelAndView("attendees/new_attendee_manually", "attendee", new Attendee());
-
+        ModelAndView modelAndView = new ModelAndView("attendees/new_attendee_manually",
+                                                     "attendee", new Attendee());
         return modelAndView;
     }
 
     @RequestMapping(value="/attendees/new_attendee/manually", method = RequestMethod.POST)
-    public RedirectView addAttendeeManually(@ModelAttribute("attendee") Attendee attendee, BindingResult result, ModelMap model){
-
-        // TODO Check if attendee is already in database
-        Event chosenEvent = (Event) attendee.getEvents().toArray()[0];
-
+    public RedirectView addAttendeeManually(@ModelAttribute("attendee") Attendee newAttendee,
+                                            BindingResult result, ModelMap model){
+        Event chosenEvent = (Event) newAttendee.getEvents().toArray()[0];
         try{
             List<Event> events = eventsRepository.findById(chosenEvent.getId());
             events.get(0);
@@ -70,11 +68,19 @@ public class AttendeesController {
                     HttpStatus.NOT_FOUND, "Such Event Not Found", exception);
         }
         Set<Attendee> attendeeList = chosenEvent.getAttendees();
-        attendeeList.add(attendee);
-        chosenEvent.setAttendees(attendeeList);
 
+        boolean attendeeNotInDatabase = attendeeRepository.findByNameAndLinkedInLink(
+                newAttendee.getName(), newAttendee.getLinkedInLink()).isEmpty();
+
+        if (attendeeNotInDatabase){
+            attendeeList.add(newAttendee);
+        }else {
+            Attendee attendeeDB = attendeeRepository.findByNameAndLinkedInLink(
+                    newAttendee.getName(), newAttendee.getLinkedInLink()).get(0);
+            attendeeList.add(attendeeDB);
+        }
+        chosenEvent.setAttendees(attendeeList);
         eventsRepository.save(chosenEvent);
-//        attendeeRepository.save(attendee);
         return new RedirectView("/attendees");
     }
 }

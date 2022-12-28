@@ -1,9 +1,11 @@
 package com.upscale.registration.controller;
 
+import com.upscale.registration.model.Attendee;
 import com.upscale.registration.model.Event;
 import com.upscale.registration.repositories.EventsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -55,24 +58,32 @@ public class EventsController {
 
     @RequestMapping(value="/events/new_event", method = RequestMethod.GET)
     public ModelAndView showNewEventForm(){
-        return new ModelAndView("events/new_event", "event", new Event());
+        return new ModelAndView("events/new_event",
+                                "event", new Event());
     }
 
     @RequestMapping(value="/events/new_event", method = RequestMethod.POST)
-    public RedirectView submitForm(@ModelAttribute("event")Event event, BindingResult result, ModelMap model){
-        // TODO implement if an event have already in database
-        LocalDateTime now = LocalDateTime.now();
+    public RedirectView submitForm(@ModelAttribute("event")Event newEvent, BindingResult result,
+                                   ModelMap model){
+
+
+        boolean eventNotInDatabase = eventsRepository.findByLinkedInLink(
+                                        newEvent.getLinkedInLink()).isEmpty();
         String urlForRedirect;
-
-        if (event.getDate().compareTo(convertToDateViaSqlTimestamp(now))==1){
-            event.setIsPassed(false);
-            urlForRedirect = "/events/upcoming";
-        } else {
-            event.setIsPassed(true);
-            urlForRedirect = "/events/passed";
+        if (eventNotInDatabase){
+            LocalDateTime now = LocalDateTime.now();
+            if (newEvent.getDate().compareTo(convertToDateViaSqlTimestamp(now))==1){
+                newEvent.setIsPassed(false);
+                urlForRedirect = "/events/upcoming";
+            } else {
+                newEvent.setIsPassed(true);
+                urlForRedirect = "/events/passed";
+            }
+            eventsRepository.save(newEvent);
+        }else{
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT, "Such Event has already exists in database");
         }
-        eventsRepository.save(event);
-
         return new RedirectView(urlForRedirect);
     }
 

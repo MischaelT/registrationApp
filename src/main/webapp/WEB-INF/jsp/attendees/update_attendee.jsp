@@ -24,7 +24,7 @@
                         <br>
                         <br>
                         <br>
-                        <h1> Change attendee data<h1>
+                        <h1> Change attendee data</h1>
                         <br>
                         <form:form method="POST"
                           action="/attendees/attendee/${id}/update" modelAttribute="attendee">
@@ -38,7 +38,7 @@
                                     <td><form:input path="linkedInLink" type="text" value="${attendee.getLinkedInLink()}"/></td>
                                 </tr>
                                 <tr>
-                                    <td><input type="submit" value="Submit"/></td>
+                                    <td align="center"><input type="submit" value="Submit"/></td>
                                 </tr>
                             </table>
                         </form:form>
