@@ -1,8 +1,10 @@
 package com.upscale.registration.controller;
 
-import com.upscale.registration.model.Attendee;
 import com.upscale.registration.model.Event;
+import com.upscale.registration.model.EventAttendee;
 import com.upscale.registration.repositories.EventsRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.http.HttpStatus;
@@ -35,6 +37,9 @@ public class EventsController {
 
     @Autowired
     private EventsRepository eventsRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @RequestMapping(value="/events/upcoming", method = RequestMethod.GET)
     public ModelAndView showUpcomingEventsPage(ModelMap model){
@@ -89,7 +94,25 @@ public class EventsController {
 
     @RequestMapping(value="/events/statistics", method = RequestMethod.GET)
     public String showStatisticsPage(ModelMap model){
-        // TODO Implement statistics
+        List<Object[]> maxQuantityOfAttendees = entityManager.createQuery(
+                "SELECT eventId, count(attendeeId) FROM EventAttendee WHERE isAttended=?1 GROUP BY eventId ORDER BY count(attendeeId) DESC LIMIT 1")
+                .setParameter(1, true).getResultList();
+        long maxEventId = (long) maxQuantityOfAttendees.get(0)[0];
+        long maxQuantity = (long) maxQuantityOfAttendees.get(0)[1];
+
+        List<Object[]> minQuantityOfAttendees = entityManager.createQuery(
+                "SELECT eventId, count(attendeeId) FROM EventAttendee WHERE isAttended=?1 GROUP BY eventId ORDER BY count(attendeeId) ASC LIMIT 1")
+                .setParameter(1, true).getResultList();
+        long minEventId = (long) minQuantityOfAttendees.get(0)[0];
+        long minQuantity = (long) minQuantityOfAttendees.get(0)[1];
+
+        Event maxEvent = eventsRepository.findById(maxEventId).get(0);
+        Event minEvent = eventsRepository.findById(minEventId).get(0);
+
+        model.addAttribute("maxEvent", maxEvent);
+        model.addAttribute("minEvent", minEvent);
+        model.addAttribute("minQuantity", minQuantity);
+        model.addAttribute("maxQuantity", maxQuantity);
         return "statistics";
     }
 

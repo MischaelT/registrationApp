@@ -41,37 +41,39 @@
                                           </c:choose>
                                     </c:when>
                                     <c:otherwise>
-                                        <table class="table table-hover">
-                                          <thead>
-                                            <tr>
-                                              <th scope="col">Name</th>
-                                              <th scope="col">Linked</th>
-                                              <c:choose>
-                                                 <c:when test="${!(event.getIsPassed())}">
-                                                      <th scope="col">Present</th>
-                                                 </c:when>
-                                              </c:choose>
-                                            </tr>
-                                          </thead>
-                                          <tbody>
-                                            <c:forEach var="attendee" items="${event.getAttendees()}">
+                                        <form method="POST" action="/events/upcoming/${id}">
+                                            <table class="table table-hover">
+                                              <thead>
                                                 <tr>
-                                                    <td><a href="../../attendees/attendee/${attendee.getId()}">${attendee.getName()}</a></td>
-                                                    <td><a href="${attendee.getLinkedInLink()}">@linked</a></td>
-                                                    <c:choose>
-                                                       <c:when test="${!(event.getIsPassed())}">
-                                                            <td><input type="checkbox"/></td>
-                                                       </c:when>
-                                                    </c:choose>
+                                                  <th scope="col">Name</th>
+                                                  <th scope="col">Linked</th>
+                                                  <c:choose>
+                                                     <c:when test="${!(event.getIsPassed())}">
+                                                          <th scope="col">Present</th>
+                                                     </c:when>
+                                                  </c:choose>
                                                 </tr>
-                                            </c:forEach>
-                                          </tbody>
-                                        </table>
-                                        <c:choose>
-                                           <c:when test="${!(event.getIsPassed())}">
-                                                <p><button type="button">submit</button></p>
-                                           </c:when>
-                                        </c:choose>
+                                              </thead>
+                                              <tbody>
+                                                <c:forEach var="attendee" items="${event.getAttendees()}">
+                                                    <tr>
+                                                        <td><a href="../../attendees/attendee/${attendee.getId()}">${attendee.getName()}</a></td>
+                                                        <td><a href="${attendee.getLinkedInLink()}">@linked</a></td>
+                                                        <c:choose>
+                                                           <c:when test="${!(event.getIsPassed())}">
+                                                                <td><input type="checkbox" name="attendees" value="${attendee.getId()}"/></td>
+                                                           </c:when>
+                                                        </c:choose>
+                                                    </tr>
+                                                </c:forEach>
+                                              </tbody>
+                                            </table>
+                                            <c:choose>
+                                               <c:when test="${!(event.getIsPassed())}">
+                                                    <p><input type="submit" value="Submit"></p>
+                                               </c:when>
+                                            </c:choose>
+                                        </form>
                                           <br>
                                           <br>
                                           <c:choose>

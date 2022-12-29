@@ -40,6 +40,20 @@ public class EventController {
         return view;
     }
 
+
+    @RequestMapping(value="/events/upcoming/{id}", method = RequestMethod.POST)
+    public ModelAndView processChosenUsersEvent(@PathVariable int id, ModelMap model){
+        Event event;
+        try {
+            event =  eventsRepository.findById(id).get(0);
+        } catch (Exception exception){
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Such Event Not Found", exception);
+        }
+        ModelAndView view = new ModelAndView("events/event", "event", event);
+        return view;
+    }
+
     @RequestMapping(value="/events/passed/{id}", method = RequestMethod.GET)
     public ModelAndView showPassedEvent(@PathVariable long id, ModelMap model) {
         Event event;

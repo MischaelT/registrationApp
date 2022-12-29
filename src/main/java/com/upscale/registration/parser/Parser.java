@@ -173,7 +173,6 @@ public class Parser {
         return attendee;
     }
 
-    // TODO Fix getExperience method
     private String getExperience(WebElement experience){
 
         String RELATIVE_EXP_XPATH = "following-sibling::div[2]";
@@ -187,7 +186,7 @@ public class Parser {
         while (hasNextElement){
             try{
                 WebElement experiencesListElement = experiencesList.findElement(
-                        By.xpath("li["+i+"]/div/div[2]"));
+                                                    By.xpath("li["+i+"]/div/div[2]"));
                 String experienceString = processExperienceInfo(experiencesListElement);
                 experiencesString+=experienceString+"__";
                 i++;
