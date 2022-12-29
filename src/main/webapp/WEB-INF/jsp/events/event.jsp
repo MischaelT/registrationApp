@@ -23,13 +23,18 @@
                                 <br>
                                 <h1> ${event.getName()} event</h1>
                                 <br>
+
                                   <c:choose>
                                      <c:when test="${!(event.getIsPassed())}">
                                          <p><a href="/events/upcoming/${id}/change_data"><button type="button">Change name/status</button></a></p>
                                      </c:when>
                                   </c:choose>
+
                                 <br>
+
+
                                 <c:choose>
+
                                     <c:when test="${event.getAttendees().isEmpty()}">
                                         <p>Seems there is no attendees</p>
                                           <c:choose>
@@ -40,9 +45,11 @@
                                              </c:when>
                                           </c:choose>
                                     </c:when>
+
                                     <c:otherwise>
                                         <form method="POST" action="/events/upcoming/${id}">
                                             <table class="table table-hover">
+
                                               <thead>
                                                 <tr>
                                                   <th scope="col">Name</th>
@@ -54,14 +61,24 @@
                                                   </c:choose>
                                                 </tr>
                                               </thead>
+
                                               <tbody>
+
                                                 <c:forEach var="attendee" items="${event.getAttendees()}">
                                                     <tr>
                                                         <td><a href="../../attendees/attendee/${attendee.getId()}">${attendee.getName()}</a></td>
                                                         <td><a href="${attendee.getLinkedInLink()}">@linked</a></td>
+
                                                         <c:choose>
                                                            <c:when test="${!(event.getIsPassed())}">
-                                                                <td><input type="checkbox" name="attendees" value="${attendee.getId()}"/></td>
+                                                               <c:choose>
+                                                                  <c:when test="${attended.contains(attendee.getId())}">
+                                                                       <td><input type="checkbox" name="attendees" value="${attendee.getId()}" checked/></td>
+                                                                  </c:when>
+                                                                  <c:otherwise>
+                                                                        <td><input type="checkbox" name="attendees" value="${attendee.getId()}"/></td>
+                                                                  </c:otherwise>
+                                                               </c:choose>
                                                            </c:when>
                                                         </c:choose>
                                                     </tr>
@@ -84,6 +101,11 @@
                                              </c:when>
                                           </c:choose>
                                     </c:otherwise>
+
+
+
+
+
                                 </c:choose>
                             <div>
                         </main>

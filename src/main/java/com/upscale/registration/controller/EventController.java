@@ -2,22 +2,24 @@ package com.upscale.registration.controller;
 
 import com.upscale.registration.model.Event;
 import com.upscale.registration.model.Attendee;
+import com.upscale.registration.model.EventAttendee;
 import com.upscale.registration.repositories.EventsRepository;
 import com.upscale.registration.repositories.AttendeeRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 public class EventController {
@@ -27,8 +29,19 @@ public class EventController {
     @Autowired
     private AttendeeRepository attendeeRepository;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
+
     @RequestMapping(value="/events/upcoming/{id}", method = RequestMethod.GET)
     public ModelAndView showUpcomingEvent(@PathVariable int id, ModelMap model){
+        List<Object[]> attended = entityManager.createQuery(
+                        "SELECT attendeeId FROM EventAttendee WHERE isAttended=?1 AND eventId=?2")
+                .setParameter(1, true).setParameter(2, id)
+                .getResultList();
+
+        model.addAttribute("attended", attended);
+
         Event event;
         try {
             event =  eventsRepository.findById(id).get(0);
@@ -40,9 +53,40 @@ public class EventController {
         return view;
     }
 
-
+    // TODO Bug with empty list
+    @Transactional
     @RequestMapping(value="/events/upcoming/{id}", method = RequestMethod.POST)
-    public ModelAndView processChosenUsersEvent(@PathVariable int id, ModelMap model){
+    public ModelAndView processChosenUsersEvent(@PathVariable int id, ModelMap model,
+                                                @RequestParam("attendees") String attendees) {
+
+        List<Long> chosenAttendeesIds = Arrays.asList(attendees.split(","))
+                                        .stream().map(str->Long.parseLong(str))
+                                        .collect(Collectors.toList());
+
+        List<Long> notChosenAttendeesIds = entityManager.createQuery(
+                        "SELECT attendeeId FROM EventAttendee WHERE eventId=?1")
+                        .setParameter(1, id).getResultList();
+        notChosenAttendeesIds.removeAll(chosenAttendeesIds);
+
+        for (Long attendeeId: chosenAttendeesIds) {
+            entityManager.createQuery(
+            "UPDATE EventAttendee SET isAttended=?1 WHERE attendeeId=?2")
+            .setParameter(1, true).setParameter(2,attendeeId).executeUpdate();
+        }
+
+        for (Long attendeeId: notChosenAttendeesIds) {
+            entityManager.createQuery(
+                            "UPDATE EventAttendee SET isAttended=?1 WHERE attendeeId=?2")
+                    .setParameter(1, false).setParameter(2,attendeeId).executeUpdate();
+        }
+
+        List<Object[]> attended = entityManager.createQuery(
+                        "SELECT attendeeId FROM EventAttendee WHERE isAttended=?1 AND eventId=?2")
+                        .setParameter(1, true).setParameter(2, id)
+                        .getResultList();
+
+        model.addAttribute("attended", attended);
+
         Event event;
         try {
             event =  eventsRepository.findById(id).get(0);
