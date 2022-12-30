@@ -40,7 +40,7 @@ public class AccountController {
         User userDb = getCurrentUser();
         userDb.setName(user.getName());
         userDb.setLinkedInLink(user.getLinkedInLink());
-        userDb.setLinkedPassword(userDb.getLinkedPassword());
+        userDb.setLinkedPassword(user.getLinkedPassword());
         usersRepository.save(userDb);
 
         return new RedirectView("/account");

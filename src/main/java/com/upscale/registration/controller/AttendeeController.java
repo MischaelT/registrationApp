@@ -37,8 +37,10 @@ public class AttendeeController {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Such Attendee Not Found", exception);
         }
-        String[] splittedExperience = attendee.getExperience().split("__");
-        model.addAttribute("experience",splittedExperience);
+        if (attendee.getExperience()!=null){
+            String[] splittedExperience = attendee.getExperience().split("__");
+            model.addAttribute("experience",splittedExperience);
+        }
 
         ModelAndView view = new ModelAndView("attendees/attendee","attendee", attendee);
         return view;

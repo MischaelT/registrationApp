@@ -58,13 +58,17 @@
                         </table>
                         <br>
                         <br>
-                        <div align="center" style="white-space: pre-line">
-                            <h3>Experience:</h3>
-                             <c:forEach var="exper" items="${experience}">
-                                   ${exper}
-                             </c:forEach>
-                        </div>
-                        <br>
+                        <c:choose>
+                            <c:when test="${attendee.getExperience()!=null}">
+                                <div align="center" style="white-space: pre-line">
+                                    <h3>Experience:</h3>
+                                     <c:forEach var="exper" items="${experience}">
+                                           ${exper}
+                                     </c:forEach>
+                                     <br>
+                                </div>
+                            </c:when>
+                        </c:choose>
                         <h3>${attendee.getName()} attended such events:</h3>
                         <table>
                           <c:forEach var="event" items="${attendee.getEvents()}">

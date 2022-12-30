@@ -63,7 +63,6 @@
                                               </thead>
 
                                               <tbody>
-
                                                 <c:forEach var="attendee" items="${event.getAttendees()}">
                                                     <tr>
                                                         <td><a href="../../attendees/attendee/${attendee.getId()}">${attendee.getName()}</a></td>
@@ -71,6 +70,7 @@
 
                                                         <c:choose>
                                                            <c:when test="${!(event.getIsPassed())}">
+
                                                                <c:choose>
                                                                   <c:when test="${attended.contains(attendee.getId())}">
                                                                        <td><input type="checkbox" name="attendees" value="${attendee.getId()}" checked/></td>
@@ -83,6 +83,9 @@
                                                         </c:choose>
                                                     </tr>
                                                 </c:forEach>
+                                                <tr>
+                                                         <td><input type="checkbox" name="attendees" value="" checked hidden/></td>
+                                                </tr>
                                               </tbody>
                                             </table>
                                             <c:choose>

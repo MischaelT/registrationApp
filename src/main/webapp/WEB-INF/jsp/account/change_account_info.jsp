@@ -40,7 +40,7 @@
                                     </tr>
                                     <tr>
                                         <td><form:label path="linkedPassword">Password</form:label></td>
-                                        <td><form:input path="linkedPassword" type="text" value="${user.getLinkedInLink()}"/></td>
+                                        <td><form:input path="linkedPassword" type="text" value="${user.getLinkedPassword()}"/></td>
                                     </tr>
                                     <tr>
                                         <td><input type="submit" value="Submit"/></td>

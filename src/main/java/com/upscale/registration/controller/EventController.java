@@ -53,15 +53,18 @@ public class EventController {
         return view;
     }
 
-    // TODO Bug with empty list
     @Transactional
     @RequestMapping(value="/events/upcoming/{id}", method = RequestMethod.POST)
     public ModelAndView processChosenUsersEvent(@PathVariable int id, ModelMap model,
                                                 @RequestParam("attendees") String attendees) {
 
-        List<Long> chosenAttendeesIds = Arrays.asList(attendees.split(","))
-                                        .stream().map(str->Long.parseLong(str))
-                                        .collect(Collectors.toList());
+        List<String> splittedString = Arrays.asList(attendees.split(","));
+        List<Long> chosenAttendeesIds = new ArrayList<>();
+        try {
+            chosenAttendeesIds = splittedString.stream().map(str->Long.parseLong(str))
+                                .collect(Collectors.toList());
+        }catch (NumberFormatException exc){
+        }
 
         List<Long> notChosenAttendeesIds = entityManager.createQuery(
                         "SELECT attendeeId FROM EventAttendee WHERE eventId=?1")
