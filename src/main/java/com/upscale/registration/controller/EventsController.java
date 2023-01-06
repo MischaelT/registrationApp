@@ -1,7 +1,6 @@
 package com.upscale.registration.controller;
 
 import com.upscale.registration.model.Event;
-import com.upscale.registration.model.EventAttendee;
 import com.upscale.registration.repositories.EventsRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -28,18 +27,17 @@ import java.util.*;
 @Controller
 public class EventsController {
 
-    @InitBinder
-    public final void initBinderUsuariosFormValidator(final WebDataBinder binder, final Locale locale) {
-        final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", locale);
-        binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, false));
-    }
-
-
     @Autowired
     private EventsRepository eventsRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    @InitBinder
+    public final void initBinderUsuariosFormValidator(final WebDataBinder binder, final Locale locale) {
+        final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", locale);
+        binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, false));
+    }
 
     @RequestMapping(value="/events/upcoming", method = RequestMethod.GET)
     public ModelAndView showUpcomingEventsPage(ModelMap model){
@@ -73,7 +71,7 @@ public class EventsController {
 
 
         boolean eventNotInDatabase = eventsRepository.findByLinkedInLink(
-                                        newEvent.getLinkedInLink()).isEmpty();
+                                     newEvent.getLinkedInLink()).isEmpty();
         String urlForRedirect;
         if (eventNotInDatabase){
             LocalDateTime now = LocalDateTime.now();

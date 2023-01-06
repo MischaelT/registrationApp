@@ -23,7 +23,7 @@
                             <br>
                             <br>
                             <h1>Hi, all<h1>
-                            <h2>I DK what to put there :)</h2>
+                            <h2>I still DK what to put there :)</h2>
                             <br>
                         </div>
                 </main>

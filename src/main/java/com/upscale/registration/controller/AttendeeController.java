@@ -33,7 +33,7 @@ public class AttendeeController {
         Attendee attendee;
         try{
             attendee =  attendeeRepository.findById(id).get(0);
-        } catch (Exception exception){
+        } catch (NullPointerException exception){
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Such Attendee Not Found", exception);
         }
@@ -51,7 +51,7 @@ public class AttendeeController {
         Attendee attendee;
         try {
             attendee =  attendeeRepository.findById(id).get(0);
-        } catch (Exception exception){
+        } catch (NullPointerException exception){
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Such Attendee Not Found", exception);
         }
@@ -64,7 +64,7 @@ public class AttendeeController {
         Attendee attendee;
         try {
             attendee =  attendeeRepository.findById(id).get(0);
-        } catch (Exception exception){
+        } catch (NullPointerException exception){
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Such Attendee Not Found", exception);
         }
@@ -79,7 +79,7 @@ public class AttendeeController {
         Attendee attendeeDb;
         try {
             attendeeDb = attendeeRepository.findById(id).get(0);
-        } catch (Exception exception){
+        } catch (NullPointerException exception){
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Such Attendee Not Found", exception);
         }

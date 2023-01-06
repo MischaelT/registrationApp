@@ -3,11 +3,13 @@ package com.upscale.registration.controller;
 import com.upscale.registration.model.Event;
 import com.upscale.registration.model.Attendee;
 import com.upscale.registration.model.EventAttendee;
+import com.upscale.registration.parser.Parser;
 import com.upscale.registration.repositories.EventsRepository;
 import com.upscale.registration.repositories.AttendeeRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -19,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.*;
+
 import java.util.stream.Collectors;
 
 @Controller
@@ -37,15 +40,15 @@ public class EventController {
     public ModelAndView showUpcomingEvent(@PathVariable int id, ModelMap model){
         List<Object[]> attended = entityManager.createQuery(
                         "SELECT attendeeId FROM EventAttendee WHERE isAttended=?1 AND eventId=?2")
-                .setParameter(1, true).setParameter(2, id)
-                .getResultList();
+                        .setParameter(1, true).setParameter(2, id)
+                        .getResultList();
 
         model.addAttribute("attended", attended);
 
         Event event;
         try {
             event =  eventsRepository.findById(id).get(0);
-        } catch (Exception exception){
+        } catch (NullPointerException exception){
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Such Event Not Found", exception);
         }
@@ -67,14 +70,14 @@ public class EventController {
         }
 
         List<Long> notChosenAttendeesIds = entityManager.createQuery(
-                        "SELECT attendeeId FROM EventAttendee WHERE eventId=?1")
-                        .setParameter(1, id).getResultList();
+                    "SELECT attendeeId FROM EventAttendee WHERE eventId=?1")
+                    .setParameter(1, id).getResultList();
         notChosenAttendeesIds.removeAll(chosenAttendeesIds);
 
         for (Long attendeeId: chosenAttendeesIds) {
             entityManager.createQuery(
-            "UPDATE EventAttendee SET isAttended=?1 WHERE attendeeId=?2")
-            .setParameter(1, true).setParameter(2,attendeeId).executeUpdate();
+                    "UPDATE EventAttendee SET isAttended=?1 WHERE attendeeId=?2")
+                    .setParameter(1, true).setParameter(2,attendeeId).executeUpdate();
         }
 
         for (Long attendeeId: notChosenAttendeesIds) {
@@ -93,7 +96,7 @@ public class EventController {
         Event event;
         try {
             event =  eventsRepository.findById(id).get(0);
-        } catch (Exception exception){
+        } catch (NullPointerException exception){
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Such Event Not Found", exception);
         }
@@ -106,7 +109,7 @@ public class EventController {
         Event event;
         try{
             event =  eventsRepository.findById(id).get(0);
-        } catch (Exception exception){
+        } catch (NullPointerException exception){
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Such Event Not Found", exception);
         }
@@ -133,26 +136,33 @@ public class EventController {
         try{
             List<Event> events = eventsRepository.findById(id);
             event = events.get(0);
-        } catch (Exception exception){
+        } catch (NullPointerException exception){
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Such Event Not Found", exception);
         }
-        Set<Attendee> attendeeList = event.getAttendees();
-        boolean attendeeNotInDatabase = attendeeRepository.findByNameAndLinkedInLink(
-                                        newAttendee.getName(), newAttendee.getLinkedInLink()).isEmpty();
+        RedirectView view;
+        if (!event.getIsPassed()){
+            Set<Attendee> attendeeList = event.getAttendees();
+            boolean attendeeNotInDatabase = attendeeRepository.findByNameAndLinkedInLink(
+                    newAttendee.getName(), newAttendee.getLinkedInLink()).isEmpty();
 
-        if (attendeeNotInDatabase){
-            attendeeList.add(newAttendee);
+            if (attendeeNotInDatabase){
+                attendeeList.add(newAttendee);
+            }else{
+                Attendee attendeeDB = attendeeRepository.findByNameAndLinkedInLink(
+                        newAttendee.getName(), newAttendee.getLinkedInLink()).get(0);
+                attendeeList.add(attendeeDB);
+            }
+
+            event.setAttendees(attendeeList);
+            eventsRepository.save(event);
+            view = new RedirectView("/events/upcoming/{id}");
+
         }else{
-            Attendee attendeeDB = attendeeRepository.findByNameAndLinkedInLink(
-                                  newAttendee.getName(), newAttendee.getLinkedInLink()).get(0);
-            attendeeList.add(attendeeDB);
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Such Event Not Found in upcoming");
         }
 
-        event.setAttendees(attendeeList);
-        eventsRepository.save(event);
-
-        RedirectView view = new RedirectView("/events/upcoming/{id}");
         return view;
     }
 
@@ -161,11 +171,17 @@ public class EventController {
         Event event;
         try{
             event =  eventsRepository.findById(id).get(0);
-        } catch (Exception exception){
+        } catch (NullPointerException exception){
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Such Event Not Found", exception);
         }
-        ModelAndView view = new ModelAndView("events/change_event_info", "event", event);
+        ModelAndView view;
+        if (!event.getIsPassed()){
+            view = new ModelAndView("events/change_event_info", "event", event);
+        }else{
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Such Event Not Found in upcomingh");
+        }
         return view;
     }
 
@@ -175,17 +191,27 @@ public class EventController {
         Event eventDb;
         try {
             eventDb = eventsRepository.findById(id).get(0);
-        } catch (Exception exception){
+        } catch (NullPointerException exception){
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Such Event Not Found", exception);
         }
-        eventDb.setIsPassed(event.getIsPassed());
-        eventDb.setDate(event.getDate());
-        eventDb.setLinkedInLink(event.getLinkedInLink());
-        eventDb.setName(event.getName());
-        eventsRepository.save(eventDb);
+        if (!eventDb.getIsPassed()) {
+            eventDb.setIsPassed(event.getIsPassed());
+            eventDb.setDate(event.getDate());
+            eventDb.setLinkedInLink(event.getLinkedInLink());
+            eventDb.setName(event.getName());
+            eventsRepository.save(eventDb);
+        }
 
-        RedirectView view = new RedirectView("/events/upcoming/{id}");
+        String redirectLink;
+
+        if (eventDb.getIsPassed()){
+            redirectLink ="/events/passed/{id}";
+        }else{
+            redirectLink = "/events/upcoming/{id}";
+        }
+
+        RedirectView view = new RedirectView(redirectLink);
         return view;
     }
 }

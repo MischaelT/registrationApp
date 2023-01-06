@@ -35,7 +35,7 @@ public class Parser {
 
     private static final String ATTENDEE_EMAIL_XPATH = "//*[@class=\"pv-contact-info__contact-type ci-email\"]/div";
 
-    private static final String ATTENDEE_EXPERIENCE_ID = "//*[@id=\"experience\"]";
+    private static final String ATTENDEE_EXPERIENCE_XPATH = "//*[@id=\"experience\"]";
 
     private static final int TIME_TO_SLEEP = 3;
 
@@ -48,7 +48,6 @@ public class Parser {
     public Parser(String linkedInName, String linkedInPassword) {
         this.linkedItnName = linkedInName;
         this.linkedInPassword = linkedInPassword;
-
         this.basePage = "https://www.linkedin.com";
 
         ChromeOptions options = new ChromeOptions();
@@ -59,10 +58,16 @@ public class Parser {
     }
 
     public List<Attendee> runEventParsing(String eventPage){
-        login(basePage);
-        List<String> attendeesLinks = getEventAttendeesLinks(eventPage);
 
+        try {
+            login(basePage);
+        }catch (Exception exception){
+            System.out.println(exception);
+            driver.quit();
+        }
+        List<String> attendeesLinks = collectEventAttendeesLinks(eventPage);
         List<Attendee> attendees = new ArrayList<>();
+
         for (String attendeeLink: attendeesLinks) {
             Attendee attendee = new Attendee();
 
@@ -79,7 +84,12 @@ public class Parser {
     }
 
     public Attendee getAttendeeInformation(Attendee attendee){
-        login(basePage);
+        try {
+            login(basePage);
+        }catch (Exception exception){
+            System.out.println(exception);
+            driver.quit();
+        }
         sleep();
         Attendee updatedAttendee = getAttendeeInfo(attendee);
         driver.quit();
@@ -87,8 +97,12 @@ public class Parser {
     }
 
     private void login(String loginPage) {
-
-        driver.get(loginPage);
+        try {
+            driver.get(loginPage);
+        }catch (Exception exception){
+            System.out.println(exception);
+            driver.quit();
+        }
         sleep();
         WebElement userName = driver.findElement(By.xpath(LOGIN_USERNAME_XPATH));
         sleep();
@@ -102,8 +116,13 @@ public class Parser {
         login_button.click();
     }
 
-    private List<String> getEventAttendeesLinks(String event_page){
-        driver.get(event_page);
+    private List<String> collectEventAttendeesLinks(String event_page){
+        try{
+            driver.get(event_page);
+        }catch (Exception exception){
+            System.out.println(exception);
+            driver.quit();
+        }
         sleep();
         WebElement userListButton = driver.findElement(By.xpath(EVENT_ATTENDEE_LIST_XPATH));
         sleep();
@@ -128,8 +147,8 @@ public class Parser {
 
     private Attendee getGeneralInfo(Attendee attendee){
 
-        //Sometimes in the links that came to this method "https//:" can be apsant,
-        // that why we should check if it is present, because Selenium can only work with links where it is present
+        //Sometimes in the links that came to this method "https//:" can be upsant,
+        // that why we should check if it is present
 
         if (httpPresent(attendee.getLinkedInLink())){
             driver.get(attendee.getLinkedInLink());
@@ -144,13 +163,12 @@ public class Parser {
         sleep();
         String currentLocation = driver.findElement(By.xpath(ATTENDEE_LOCATION_XPATH)).getText();
         sleep();
-        String currentExperience = getExperience(driver.findElement(By.xpath(ATTENDEE_EXPERIENCE_ID)));
+        String currentExperience = getExperience(driver.findElement(By.xpath(ATTENDEE_EXPERIENCE_XPATH)));
         sleep();
 
         attendee.setCurrentPosition(companyAndPosition);
         attendee.setCurrentCompany(company);
         attendee.setLocation(currentLocation);
-
         attendee.setExperience(currentExperience);
         return attendee;
     }
@@ -167,6 +185,7 @@ public class Parser {
             emailAddress = driver.findElement(By.xpath(ATTENDEE_EMAIL_XPATH)).getText();
         } catch (Exception exc){
             System.out.println(exc);
+            driver.quit();
         }
         attendee.setEmailAddress(emailAddress);
         attendee.setName(name);
@@ -229,6 +248,7 @@ public class Parser {
         try {
             TimeUnit.SECONDS.sleep(generateTimeToSleep());
         } catch (InterruptedException e) {
+            driver.quit();
             throw new RuntimeException(e);
         }
     }

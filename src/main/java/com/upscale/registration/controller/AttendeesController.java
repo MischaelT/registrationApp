@@ -63,7 +63,7 @@ public class AttendeesController {
         try{
             List<Event> events = eventsRepository.findById(chosenEvent.getId());
             events.get(0);
-        } catch (Exception exception){
+        } catch (NullPointerException exception){
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Such Event Not Found", exception);
         }

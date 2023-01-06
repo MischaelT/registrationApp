@@ -42,7 +42,8 @@
                                 </tr>
                                 <tr>
                                     <td><form:label path="isPassed">IsPassed</form:label></td>
-                                    <td><form:input path="isPassed" type="text" value="${event.getIsPassed()}"/></td>
+                                    <td><form:checkbox path="isPassed" value="${event.getIsPassed()}"/> Passed</td>
+
                                 </tr>
                                 <tr>
                                     <td><input type="submit" value="Submit"/></td>
